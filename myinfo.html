@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 정보 수정</title>
+</head>
+<body>
+  <h1>회원 정보</h1>
+  <label for="nickname">닉네임: </label>
+  <input type="text" id="nickname" name="nickname">
+  <button id="nicknameUpdateButton">닉네임변경</button><br>
+
+  <label for="userId">ID: </label>
+  <input type="text" id="userId" name="userId"><br>
+  <label for="userId">email: </label>
+  <input type="text" id="email" name="email"><br>
+  
+  <label for="password">비밀번호: </label>
+  <input type="text" id="password" name="password"> /* 디버깅용, password타입 권장*/
+  <button id="passwordUpdateButton">비밀번호 변경</button><br>
+
+  <h1>연동 정보</h1>
+  <label for="discord">discord: </label>
+  <input type="text" id="discord" name="discord"><br>
+
+  <label for="riot">riot: </label>
+  <input type="text" id="riot" name="riot"><br>
+
+  <label for="school">school: </label>
+  <input type="text" id="school" name="schoold"><br>
+
+  <h1>내가 참가한 대회</h1><br>
+  <div id="competitionList"></div>
+
+
+  <h1>내가 개최한 대회</h1><br>
+  <div id="competitionList"></div>
+
+
+
+
+  <script>
+    const accountID = 1;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+
+
+        fetch(`http://localhost:3000/user/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+            data = data.result;
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          document.getElementById('nickname').value = data.nickname;
+          document.getElementById('userId').value = data.user_id;
+          document.getElementById('email').value = data.email;
+          document.getElementById('password').value = data.password;
+          document.getElementById('discord').value = data.discord_auth;
+          document.getElementById('riot').value = data.riot_auth;
+          document.getElementById('school').value = data.school_auth;
+          //document.getElementById('ID').value = data.user_id;
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+        });
+
+      const nicknameUpdateButton = document.getElementById('nicknameUpdateButton');
+
+
+      //닉네임 변경
+      nicknameUpdateButton.addEventListener('click', () => {
+
+        const nickname = document.getElementById('nickname').value;
+
+        // 서버로 보낼 요청 데이터
+        const requestData = {
+          nickname: nickname,
+          //password: null,
+        };
+
+        // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
+        fetch(`http://localhost:3000/user/${accountID}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          alert('회원 정보가 수정되었습니다.');
+        })
+        .catch((error) => {
+          console.error('Error updating user data:', error);
+          alert('회원 정보 수정에 실패했습니다.');
+        });
+      });
+
+
+
+
+
+      //패스워드 변경
+      passwordUpdateButton.addEventListener('click', () => {
+        const password = document.getElementById('password').value;
+
+
+        // 서버로 보낼 요청 데이터
+        const requestData = {
+          //nickname: null,
+          password: password,
+        };
+
+        // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
+        fetch(`http://localhost:3000/user/${accountID}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          alert('회원 정보가 수정되었습니다.');
+        })
+        .catch((error) => {
+          console.error('Error updating user data:', error);
+          alert('회원 정보 수정에 실패했습니다.');
+        });
+      });
+
+    });
+  </script>
+</body>
+</html>
