@@ -13,6 +13,8 @@
 >git commit -m '커밋 메시지'
 >git push origin dev
 
+중간에 warning뜨는건 무시해도 됨
+
 ## error: failed to push some refs to 'https://github.com/tr-kr/BE.git' <br>
 ### ->로컬에 dev브랜치가 없어서 에러뜰때
 >git branch <br>
