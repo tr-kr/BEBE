@@ -40,7 +40,7 @@ module.exports = function(app){
 
     //류지원
     // 3. 특정 유저 조회 API
-    app.get('/userrr/:userId', user.getUserById);
+    app.get('/user/:userId', user.getUserById);
 ///////////////////////////////////////////////////////////////
 
 

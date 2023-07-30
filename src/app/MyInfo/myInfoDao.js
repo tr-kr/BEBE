@@ -2,7 +2,7 @@
 async function selectUser(connection) {
   const selectUserListQuery = `
                 SELECT email, nickname 
-                FROM UserInfo;
+                FROM User;
                 `;
   const [userRows] = await connection.query(selectUserListQuery);
   return userRows;
@@ -22,7 +22,7 @@ async function selectUserEmail(connection, email) {
 // userId 회원 조회
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
-                 SELECT user_id, nickname, age, password, phone_number, email, created_at, update_at, discord_auth, riot_auth, school_auth 
+                 SELECT user_id, nickname, age, password, phone_number, email, created_at, update_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose 
                  FROM User 
                  WHERE id = ?;
                  `;
@@ -70,6 +70,7 @@ async function selectUserAccount(connection, email) {
   );
   return selectUserAccountRow[0];
 }
+
 
 async function updateUserInfo(connection, id, nickname, password) {
   const updateUserQuery = `

@@ -1,16 +1,20 @@
-CREATE TABLE `User` (
+﻿CREATE TABLE `User` (
 	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`user_id`	VARCHAR(255)	NULL,
+	`account`	VARCHAR(255)	NULL,
 	`password`	VARCHAR(255)	NULL,
 	`nickname`	VARCHAR(255)	NULL,
 	`age`	INT	NULL,
 	`phone_number`	VARCHAR(255)	NULL,
 	`email`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
-	`update_at`	TIMESTAMP	NULL,
+	`updated_at`	TIMESTAMP	NULL,
 	`discord_auth`	VARCHAR(255)	NULL,
 	`riot_auth`	VARCHAR(255)	NULL,
-	`school_auth`	VARCHAR(255)	NULL
+	`school_auth`	VARCHAR(255)	NULL,
+	`played_competition`	INT	NULL,
+	`played_match`	INT	NULL,
+	`win`	INT	NULL,
+	`lose`	INT	NULL
 );
 
 CREATE TABLE `Competition` (
@@ -60,12 +64,19 @@ CREATE TABLE `Tournament_Node` (
 	`updated_at`	TIMESTAMP	NULL
 );
 
-CREATE TABLE `User_Record` (
+CREATE TABLE `Team_Match_History` (
 	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`user_id`	INT	NOT NULL,
 	`match_id`	INT	NOT NULL,
 	`competition_id`	INT	NOT NULL,
-	`id2`	INT	NOT NULL
+	`team_id`	INT	NOT NULL,
+	`is_won`	Bool	NULL
+);
+
+CREATE TABLE `Team_Competition_History` (
+	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	`competition_id`	INT	NOT NULL,
+	`team_id`	INT	NOT NULL,
+	`rank`	INT	NULL
 );
 
 ALTER TABLE `User` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
@@ -91,12 +102,17 @@ ALTER TABLE `Tournament_Node` ADD CONSTRAINT `PK_TOURNAMENT_NODE` PRIMARY KEY (
 	`competition_id`
 );
 
-ALTER TABLE `User_Record` ADD CONSTRAINT `PK_USER_RECORD` PRIMARY KEY (
+ALTER TABLE `Team_Match_History` ADD CONSTRAINT `PK_TEAM_MATCH_HISTORY` PRIMARY KEY (
 	`id`,
-	`user_id`,
 	`match_id`,
 	`competition_id`,
-	`id2`
+	`team_id`
+);
+
+ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `PK_TEAM_COMPETITION_HISTORY` PRIMARY KEY (
+	`id`,
+	`competition_id`,
+	`team_id`
 );
 
 ALTER TABLE `Player` ADD CONSTRAINT `FK_User_TO_Player_1` FOREIGN KEY (
@@ -120,29 +136,36 @@ REFERENCES `Competition` (
 	`id`
 );
 
-ALTER TABLE `User_Record` ADD CONSTRAINT `FK_User_TO_User_Record_1` FOREIGN KEY (
-	`user_id`
-)
-REFERENCES `User` (
-	`id`
-);
-
-ALTER TABLE `User_Record` ADD CONSTRAINT `FK_Tournament_Node_TO_User_Record_1` FOREIGN KEY (
+ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Tournament_Node_TO_Team_Match_History_1` FOREIGN KEY (
 	`match_id`
 )
 REFERENCES `Tournament_Node` (
 	`id`
 );
 
-ALTER TABLE `User_Record` ADD CONSTRAINT `FK_Tournament_Node_TO_User_Record_2` FOREIGN KEY (
+ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Tournament_Node_TO_Team_Match_History_2` FOREIGN KEY (
 	`competition_id`
 )
 REFERENCES `Tournament_Node` (
 	`competition_id`
 );
 
-ALTER TABLE `User_Record` ADD CONSTRAINT `FK_Team_TO_User_Record_1` FOREIGN KEY (
-	`id2`
+ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Team_TO_Team_Match_History_1` FOREIGN KEY (
+	`team_id`
+)
+REFERENCES `Team` (
+	`id`
+);
+
+ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `FK_Competition_TO_Team_Competition_History_1` FOREIGN KEY (
+	`competition_id`
+)
+REFERENCES `Competition` (
+	`id`
+);
+
+ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `FK_Team_TO_Team_Competition_History_1` FOREIGN KEY (
+	`team_id`
 )
 REFERENCES `Team` (
 	`id`

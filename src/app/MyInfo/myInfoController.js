@@ -89,7 +89,7 @@ exports.getUserById = async function (req, res) {
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);
-    console.log(userByUserId.email);
+    console.log('[조회]',userId, userByUserId.nickname);
     return res.send(response(baseResponse.SUCCESS, userByUserId));
 };
 
