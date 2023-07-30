@@ -31,6 +31,25 @@ exports.retrieveUser = async function (userId) {
   return userResult[0];
 };
 
+exports.retrievePlayList = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const playListResult = await userDao.selectPlayList(connection, userId);
+
+  connection.release();
+
+  return playListResult;
+};
+exports.retrieveHostList = async function (userId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const hostListResult = await userDao.selectHostList(connection, userId);
+
+  connection.release();
+
+  return hostListResult;
+};
+
+
+
 exports.emailCheck = async function (email) {
   const connection = await pool.getConnection(async (conn) => conn);
   const emailCheckResult = await userDao.selectUserEmail(connection, email);

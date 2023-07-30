@@ -7,7 +7,7 @@
 </head>
 <body>
   <input type="text" id="user" name="user">
-  <button id="userButton">회원번호로 불러오기</button><br>
+  <button id="userButton">회원번호로 불러오기</button>
   <h1>회원 정보</h1>
   <label for="nickname">닉네임: </label>
   <input type="text" id="nickname" name="nickname">
@@ -47,14 +47,16 @@
   <input type="text" id="win" name="win"><br>
   
   <label for="lose">패: </label>
-  <input type="text" id="lose" name="lose"><br>
+  <input type="text" id="lose" name="lose"><br><br>
   
-  <h1>내가 참가한 대회</h1><br>
-  <div id="competitionList"></div>
+  <h1>내가 참가한 대회</h1>
+  <h3>※얻어낸 대회id를 통해, 대회조회API(snail)호출</h3>
+  <ul id="playList"></ul>
 
 
-  <h1>내가 개최한 대회</h1><br>
-  <div id="competitionList"></div>
+  <h1>내가 개최한 대회</h1>
+  <ul id="hostList"></ul>
+
 
 
 
@@ -81,7 +83,7 @@
           // 받아온 데이터를 텍스트박스에 채워 넣음
           console.log(data);
           document.getElementById('nickname').value = data.nickname;
-          document.getElementById('userId').value = data.user_id;
+          document.getElementById('userId').value = data.account;
           document.getElementById('email').value = data.email;
           document.getElementById('password').value = data.password;
           document.getElementById('discord').value = data.discord_auth;
@@ -97,6 +99,62 @@
           console.error('API 호출 오류:', error);
           alert('유효한 User ID가 아닙니다.');
         });
+
+        //////////////////////////////////
+        //참여한 대회 리스트 가져오기
+        fetch(`http://localhost:3000/user/playList/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          data = data.result;
+
+          const playList = document.getElementById("playList");
+          playList.innerHTML = '';
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          data.forEach(data => {
+            playList.append('competition_id: ', data.competition_id, ', ranking: ', data.ranking);
+            playList.innerHTML += '<br>';
+          });
+          
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+        });
+
+        //////////////////////////////////
+        //개최한 대회 리스트 가져오기
+        fetch(`http://localhost:3000/user/hostList/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          data = data.result;
+
+          const hostList = document.getElementById("hostList");
+          hostList.innerHTML = '';
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          data.forEach(data => {
+            hostList.append('competition_id: ', data.id);
+            hostList.innerHTML += '<br>';
+          });
+          
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+        });
+
+
 
       });
       
@@ -120,7 +178,7 @@
 
         // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
         fetch(`http://localhost:3000/user/${accountID}`, {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -154,7 +212,7 @@
 
         // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
         fetch(`http://localhost:3000/user/${accountID}`, {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },

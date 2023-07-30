@@ -89,7 +89,33 @@ exports.getUserById = async function (req, res) {
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);
-    console.log('[조회]',userId, userByUserId.nickname);
+    console.log('[유저 조회]',userId, userByUserId.nickname);
+    return res.send(response(baseResponse.SUCCESS, userByUserId));
+};
+
+exports.getPlayListById = async function (req, res) {
+
+    /**
+     * Path Variable: userId
+     */
+    const userId = req.params.userId;
+
+    if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const userByUserId = await userProvider.retrievePlayList(userId);
+    console.log('[참여한 대회 조회]',userId, userByUserId.nickname);
+    return res.send(response(baseResponse.SUCCESS, userByUserId));
+};
+
+exports.getHostListById = async function (req, res) {
+
+    /**
+     * Path Variable: userId
+     */
+    const userId = req.params.userId;
+
+    if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const userByUserId = await userProvider.retrieveHostList(userId);
+    console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
     return res.send(response(baseResponse.SUCCESS, userByUserId));
 };
 

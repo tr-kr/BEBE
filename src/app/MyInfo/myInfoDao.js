@@ -22,13 +22,38 @@ async function selectUserEmail(connection, email) {
 // userId 회원 조회
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
-                 SELECT user_id, nickname, age, password, phone_number, email, created_at, update_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose 
+                 SELECT account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose 
                  FROM User 
                  WHERE id = ?;
                  `;
   const [userRow] = await connection.query(selectUserIdQuery, userId);
   return userRow;
 }
+
+// userId로 참가했던 대회들 불러오기
+async function selectPlayList(connection, userId) {
+  const selectPlayList = `
+                 SELECT competition_id, ranking
+                 FROM Team_Competition_History
+                 WHERE team_id IN (SELECT team_id
+                  FROM Player
+                  WHERE user_id = ?)
+                 `;
+  const [userRow] = await connection.query(selectPlayList, userId);
+  return userRow;
+}
+
+// userId로 개최했던 대회들 불러오기
+async function selectHostList(connection, userId) {
+  const selectHostList = `
+                 SELECT id
+                 FROM Competition
+                 WHERE host_id = ?
+                 `;
+  const [userRow] = await connection.query(selectHostList, userId);
+  return userRow;
+}
+
 
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
@@ -77,7 +102,7 @@ async function updateUserInfo(connection, id, nickname, password) {
   UPDATE User 
   SET nickname = IF(? IS NOT NULL, ?, nickname),
       password = IF(? IS NOT NULL, ?, password),
-      update_at = CURRENT_TIMESTAMP
+      updated_at = CURRENT_TIMESTAMP
   WHERE id = ?;`;
   const updateUserRow = await connection.query(updateUserQuery, [nickname, nickname, password, password, id]);
   return updateUserRow[0];
@@ -88,8 +113,11 @@ module.exports = {
   selectUser,
   selectUserEmail,
   selectUserId,
+  selectPlayList,
+  selectHostList,
   insertUserInfo,
   selectUserPassword,
   selectUserAccount,
   updateUserInfo,
+
 };
