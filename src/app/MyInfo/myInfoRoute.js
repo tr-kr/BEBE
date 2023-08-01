@@ -34,7 +34,7 @@ module.exports = function(app){
     ///////////////////////////////////////////////////////////////
     //류지원
 
-    //app.get('')
+
     //류지원
     // 3. 특정 유저 조회 API
     app.get('/user/:userId', user.getUserById);
@@ -47,7 +47,7 @@ module.exports = function(app){
     app.get('/user/hostList/:userId', user.getHostListById);
 
 
-    //app.get('/')
+
 ///////////////////////////////////////////////////////////////
 
 

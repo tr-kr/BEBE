@@ -50,7 +50,7 @@
   <input type="text" id="lose" name="lose"><br><br>
   
   <h1>내가 참가한 대회</h1>
-  <h3>※얻어낸 대회id를 통해, 대회조회API(snail)호출</h3>
+  <h3>※얻어낸 대회id를 통해, 대회조회API(snail담당)호출</h3>
   <ul id="playList"></ul>
 
 
@@ -98,6 +98,7 @@
         .catch(error => {
           console.error('API 호출 오류:', error);
           alert('유효한 User ID가 아닙니다.');
+          redirection
         });
 
         //////////////////////////////////
