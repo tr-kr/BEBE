@@ -11,13 +11,12 @@
 >git init <br>
 >git add . <br>
 >git commit -m '커밋 메시지'
->git push origin dev //origin설정 안돼 있으면 https://github.com/tr-kr/trkrBE.git
+>git push origin dev // origin설정 안돼 있으면 https://github.com/tr-kr/trkrBE.git
 
->//현재 "origin" 원격 저장소의 URL 확인
->git remote -v
->//"origin" 원격 저장소의 URL 변경
+>//현재 "origin" 원격 저장소의 URL 확인 <br>
+>git remote -v <br>
+>//"origin" 원격 저장소의 URL 변경 <br>
 >git remote set-url origin <new_repository_url>
-
 
 중간에 warning뜨는건 무시해도 됨
 
