@@ -7,15 +7,15 @@
 >git config --global user.name "ryuwldnjs"<br>
 >git config --global user.email "ryu_eclipse@naver.com"   //본인 ID, 이메일로 바꿔서 하기
 
->git clone https://github.com/tr-kr/BE.git <br>
+>git clone https://github.com/tr-kr/BE.git <br> //깃헙에서 파일 가져온 후 본인이 만든 js파일(src/app위치에)+테스트용html파일 추가하기
 >git init <br>
 >git add . <br>
 >git commit -m '커밋 메시지'
 >git push origin dev //origin설정 안돼 있으면 https://github.com/tr-kr/trkrBE.git
 
-># 현재 "origin" 원격 저장소의 URL 확인
+>//현재 "origin" 원격 저장소의 URL 확인
 >git remote -v
-># "origin" 원격 저장소의 URL 변경
+>//"origin" 원격 저장소의 URL 변경
 >git remote set-url origin <new_repository_url>
 
 
@@ -30,6 +30,6 @@
 
 ### ->local repository에 없는 파일에 remote repository에 존재할때
 최신화 관련 이슈
->git pull origin dev
+>git pull origin 
 
 이후 다시 push
