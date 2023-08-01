@@ -13,6 +13,7 @@
 >git commit -m '커밋 메시지'
 >git push origin dev // origin설정 안돼 있으면 https://github.com/tr-kr/trkrBE.git
 
+origin 경로 설정
 >//현재 "origin" 원격 저장소의 URL 확인 <br>
 >git remote -v <br>
 >//"origin" 원격 저장소의 URL 변경 <br>
