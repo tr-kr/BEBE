@@ -36,9 +36,9 @@ module.exports = function(app){
 
 
     //류지원
-    // 3. 특정 유저 조회 API
+    // 특정 유저 조회 API
     app.get('/user/:userId', user.getUserById);
-    // 특정유저 수정 API
+    // 특정 유저 수정 API
     app.put('/user/:userId', user.updateUser);
 
     // 참여한 대회 리스트 조회API
