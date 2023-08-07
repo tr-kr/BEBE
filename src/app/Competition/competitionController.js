@@ -34,7 +34,7 @@ exports.index = async function (req,res){
  * [GET] /api/competitions/:competitionId
  */
 exports.getCompetition = async function (req,res){
-    const id = req.params.compId;
+    const id = req.params.competitionId;
 
     if (!id) {
         // 대회 목록 전체 조회
@@ -42,8 +42,8 @@ exports.getCompetition = async function (req,res){
         return res.send(response(baseResponse.SUCCESS, competitionResultList));
     } else {
         // 특정 대회 조회
-        const compListById = await competitionProvider.retrieveCompetitionList(id);
-        return res.send(response(baseResponse.SUCCESS, compListById));
+        const competitionResultListById = await competitionProvider.retrieveCompetitionList(id);
+        return res.send(response(baseResponse.SUCCESS, competitionResultListById));
     }
 }
 

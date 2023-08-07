@@ -15,7 +15,7 @@ exports.retrieveCompetitionList = async function (id) {
 
   } else {
     const connection = await pool.getConnection(async (conn) => conn);
-    const competitionListResult = await competitionDao.getCompetitionId(connection, id);
+    const competitionListResult = await competitionDao.getCompetitionById(connection, id);
     connection.release();
 
     return competitionListResult;

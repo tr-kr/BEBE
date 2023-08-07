@@ -36,7 +36,7 @@ module.exports = function (app) {
     
     // id값을 지정해서 공지 삭제
     app.delete('/api/competition/:competitionId', competition.deleteCompetition);
- };
+};
 
 
 // app.post('/upload', upload.single('photo'), competition.uploadImage)

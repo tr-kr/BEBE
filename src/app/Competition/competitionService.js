@@ -1,12 +1,13 @@
-const {logger} = require("../../../config/winston");
-const {pool} = require("../../../config/database");
+const { logger } = require("../../../config/winston");
+const { pool } = require("../../../config/database");
 const secret_config = require("../../../config/secret");
 const baseResponse = require("../../../config/baseResponseStatus");
-const {response} = require("../../../config/response");
-const {errResponse} = require("../../../config/response");
+const { response } = require("../../../config/response");
+const { errResponse } = require("../../../config/response");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const {connect} = require("http2");
+const { connect } = require("http2");
+const fs = require('fs');
 
 const competitionProvider = require("./competitionProvider");
 const competitionDao = require("./competitionDao");
@@ -17,50 +18,61 @@ const path = require('path');
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 // 대회 create
-exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification, 
-    prize, pre_date, final_date, poster_path){
-    try{
+exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
+    prize, pre_date, final_date, poster_path) {
+    try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification, 
+        const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
             prize, pre_date, final_date, poster_path]
 
         const createCompetitionResult = await competitionDao.createCompetition(connection, createCompetitionParams);
         console.log(`추가된 경기 id : ${createCompetitionResult.insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
-    } catch (err){
+    } catch (err) {
         logger.error(`App - createCompetition Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 }
 
 // 대회 update
-exports.updateCompetition = async function (competitionId, competition_title, competition_content, event, dead_date, qualification, 
-    prize, pre_date, final_date, poster_path){
-    try{
+exports.updateCompetition = async function (competitionId, competition_title, competition_content, event, dead_date, qualification,
+    prize, pre_date, final_date, poster_path) {
+    try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const updateCompetitionParams = [competition_title, competition_content, event, dead_date, qualification, 
+        const updateCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
             prize, pre_date, final_date, poster_path]
 
         const updateCompetitionResult = await competitionDao.updateCompetition(connection, competitionId, updateCompetitionParams);
         console.log(`수정된 경기 id : ${updateCompetitionResult.insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
-    } catch (err){
+    } catch (err) {
         logger.error(`App - updateCompetition Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 }
 
 // 대회 delete
-exports.deleteCompetition = async function (competitionId){
-    try{
+exports.deleteCompetition = async function (competitionId) {
+    try {
         const connection = await pool.getConnection(async (conn) => conn);
+        const competitionPosterPath = await competitionDao.getPosterPath(connection, competitionId);
+        const posterPath = competitionPosterPath[0].poster_path;
+        const newPath = '\\' + competitionPosterPath[0].poster_path
         const deleteCompetitionResult = await competitionDao.deleteCompetition(connection, competitionId);
-        console.log(`삭제된 경기 id : ${deleteCompetitionResult.affectedRows}`)
-        connection.release();
+        console.log(newPath);
+        fs.unlink(newPath, (err) => {
+            if (err) {
+                console.error('파일 삭제 중 오류 발생', err)
+                connection.release();
+                return;
+            }
+            console.log(`삭제된 경기 id : ${competitionId}`)
+            connection.release();
+        });
         return response(baseResponse.SUCCESS);
-    } catch (err){
+    } catch (err) {
         logger.error(`App - deleteCompetition Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
