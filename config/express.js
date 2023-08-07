@@ -21,6 +21,7 @@ module.exports = function () {
   //  require('../src/app/User/userRoute')(app);
 
     require('../src/app/MyInfo/myInfoRoute')(app); // 마이페이지 - Ryu
+    require('../src/app/Competition/competitionRoute')(app);
     // require('../src/app/Board/boardRoute')(app);
 
     return app;

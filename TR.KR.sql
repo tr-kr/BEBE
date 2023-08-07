@@ -23,7 +23,7 @@ CREATE TABLE `Competition` (
 	`competition_title`	VARCHAR(50)	NULL,
 	`competition_content`	TEXT	NULL,
 	`event`	VARCHAR(50)	NULL,
-	`post_date`	TIMESTAMP	NULL,
+	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL,
 	`dead_date`	TIMESTAMP	NULL,
 	`qualification`	TEXT	NULL,
