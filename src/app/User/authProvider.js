@@ -1,9 +1,9 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 
-const userDao = require("./userDao");
+const authDao = require("./authDao");
 
-// Provider: Read 비즈니스 로직 처리
+/* Provider: Read 비즈니스 로직 처리
 
 exports.retrieveUserList = async function (email) {
   if (!email) {
@@ -12,13 +12,29 @@ exports.retrieveUserList = async function (email) {
     connection.release();
 
     return userListResult;
-
   } else {
     const connection = await pool.getConnection(async (conn) => conn);
     const userListResult = await userDao.selectUserEmail(connection, email);
     connection.release();
 
     return userListResult;
+  }
+};
+
+//product 조회
+exports.retrieveProductList = async function (idx) {
+  if (!idx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const productListResult = await userDao.selectProduct(connection);
+    connection.release();
+
+    return productListResult;
+  } else {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const productListResult = await userDao.selectProductId(connection, idx);
+    connection.release();
+
+    return productListResult;
   }
 };
 
@@ -42,8 +58,8 @@ exports.emailCheck = async function (email) {
 exports.passwordCheck = async function (selectUserPasswordParams) {
   const connection = await pool.getConnection(async (conn) => conn);
   const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
+    connection,
+    selectUserPasswordParams
   );
   connection.release();
   return passwordCheckResult[0];
@@ -55,4 +71,4 @@ exports.accountCheck = async function (email) {
   connection.release();
 
   return userAccountResult;
-};
+};*/

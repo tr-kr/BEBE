@@ -46,27 +46,30 @@ app.get('/api/auth/discord/success', async (req, res) => {
   try {
     console.log(1);
 
-    const data =new URLSearchParams({
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      code: code,
-      grant_type: 'authorization_code',
-      redirect_uri: REDIRECT_URI,
-    }).toString();
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    console.log(4);
-    const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', data, { headers });
-
-    
+    const tokenResponse = await axios.post('https://discord.com/api/v10/oauth2/token', {
+      method: 'POST',
+      body: new URLSearchParams({
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code : code,
+        grant_type: 'authorization_code',
+        redirect_uri: REDIRECT_URI,
+        scope: 'identify',
+      }).toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
       console.log(tokenResponse);
-    //const accessToken = tokenResponse.data.access_token;
-    const accessToken = tokenResponse.data.access_token;
+
+
+      console.log(6);
+      //const accessToken = tokenResponse.data.access_token;
+      const accessToken = tokenResponse.data.access_token;
       console.log(2);
 
 
-     const userResponse = await axios.get('/users/@me', {
+     const userResponse = await axios.get('https://discord.com/api/users/@me', {
        headers: {
          Authorization: `Bearer ${accessToken}`,
        },

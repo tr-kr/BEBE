@@ -21,7 +21,8 @@ module.exports = function () {
   //  require('../src/app/User/userRoute')(app);
 
     require('../src/app/MyInfo/myInfoRoute')(app); // 마이페이지 - Ryu
-    require('../src/app/Competition/competitionRoute')(app);
+    require('../src/app/Competition/competitionRoute')(app); // 대회 - Snail
+    require('../src/app/User/authRoute')(app); // 유저 로그인 - Light
     require('../src/app/Auth_test/authRoute')(app);
     // require('../src/app/Board/boardRoute')(app);
 
