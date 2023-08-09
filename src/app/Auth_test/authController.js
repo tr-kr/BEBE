@@ -1,12 +1,13 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
-const userProvider = require("../../app/Auth/userProvider");
-const userService = require("../../app/Auth/userService");
+const userProvider = require("./authProvider");
+const userService = require("./authService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
+const axios = require('axios');
 /**
  * API No. 0
  * API Name : 테스트 API
@@ -199,3 +200,60 @@ exports.check = async function (req, res) {
     console.log(userIdResult);
     return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
 };
+
+
+
+const CLIENT_ID = '1138439231073693736';
+const CLIENT_SECRET = '4f34a94c10adfd93b336fd0265fc8157ea9421b6a35c911e2559fa0f6c9c15d1';
+const REDIRECT_URI = 'http://localhost:3000/api/auth/discord/success';
+
+
+exports.tryAuthDiscord = async function(req, res){
+    res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
+}
+
+exports.authDiscord = async function(req, res){
+    const code = req.query.code;
+
+    const tokenParams = new URLSearchParams({
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      code: code,
+      grant_type: 'authorization_code',
+      redirect_uri: REDIRECT_URI,
+    });
+  
+    try {
+      const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', tokenParams.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+  
+      const accessToken = tokenResponse.data.access_token;
+  
+      const userResponse = await axios.get('https://discord.com/api/users/@me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      const user = userResponse.data;
+      // 여기서 user 정보를 활용하여 사용자 인증 및 처리 로직을 진행합니다.
+  
+      res.send(`Hello, ${user.username}#${user.discriminator}!`);
+    } catch (error) {
+      console.error('Error:', error);
+      res.send('An error occurred.');
+    }
+
+}
+
+
+
+
+
+
+
+
+
