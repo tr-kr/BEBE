@@ -53,14 +53,22 @@ exports.getCompetition = async function (req,res){
  * [POST] /api/competition
  */
 exports.registCompetition = async function (req, res) {
-    const { competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date } = req.body;
-    // console.log(req.body);
-    const poster_path = req.file.path;
+    try {
+        const { competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date } = req.body;
+        // const poster_path = req.file.path;
+        const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+        const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
 
-    const createCompetitionResponse = await competitionService.createCompetition(
-        competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date, poster_path);
+        const createCompetitionResponse = await competitionService.createCompetition(
+            competition_title, competition_content, event, dead_date, qualification, 
+            prize, pre_date, final_date, poster_path, pdf_path);
 
-    return res.send(createCompetitionResponse);
+        return res.send(createCompetitionResponse);
+    } catch (error) {
+        // 에러 처리
+        console.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
 };
 
 
@@ -73,10 +81,12 @@ exports.updateCompetition = async function (req, res) {
     competitionId = req.params.competitionId;
     const { competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date } = req.body;
 
-    const poster_path = req.file.path;
+    //const poster_path = req.file.path;
+    const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+    const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
 
     const updateCompetitionResponse = await competitionService.updateCompetition(
-        competitionId, competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date, poster_path);
+        competitionId, competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date, poster_path, pdf_path);
 
     return res.send(updateCompetitionResponse);
 };
@@ -93,29 +103,6 @@ exports.deleteCompetition = async function (req, res) {
 
     return res.send(deleteCompetitionResponse);
 };
-
-// exports.updateNotices = async function (req, res) {
-//     const id = req.params.id;
-//     const { noticeTitle, noticeContents } = req.body;
-
-//     if (!noticeContents || !noticeContents)
-//         return res.send(response(baseResponse.SIGNUP_EMPTY));
-
-//     const updateResponse = await noticeService.updateNotice(
-//         id,
-//         noticeTitle,
-//         noticeContents
-//     );
-
-//     return res.send(updateResponse);
-// };
-// exports.deleteNotices = async function (req, res) {
-//     const id = req.params.id;
-
-//     const deleteResponse = await noticeService.deleteNotice(id);
-
-//     return res.send(deleteResponse);
-// };
 
 
 

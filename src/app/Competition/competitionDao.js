@@ -25,8 +25,8 @@ async function createCompetition(connection, createCompetitionParams) {
   // host_id는 로그인 기능 구현 후 추가하기
   const createCompetitionQuery = `
          INSERT INTO Competition (competition_title, competition_content, event, dead_date, qualification, 
-         prize, pre_date, final_date, poster_path,  created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+         prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
          `;
   const [competitionRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
   // console.log('idrow : ',idRows);
@@ -39,7 +39,7 @@ async function updateCompetition(connection, competitionId, updateCompetitionPar
   const updateCompetitionQuery = `
         UPDATE Competition 
         SET competition_title = ?, competition_content = ?, event = ?, dead_date = ?, qualification = ?, prize = ?,
-        pre_date = ?, final_date = ?, poster_path = ?, updated_at = CURRENT_TIMESTAMP
+        pre_date = ?, final_date = ?, poster_path = ?, pdf_path = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?;
         `;
   updateCompetitionParams.push(competitionId)
@@ -69,13 +69,26 @@ async function getPosterPath(connection, competitionId){
   return competitionRows;
 }
 
+// Id값을 입력해 db에 저장된 pdf 경로 반환
+async function getPdfPath(connection, competitionId){
+  const getPdfPathQuery = `
+        SELECT pdf_path 
+        FROM Competition 
+        WHERE id = ?
+        `;
+  const [competitionRows] = await connection.query(getPdfPathQuery, competitionId);
+  // console.log("Competition Rows:", competitionRows); // 이 줄 추가
+  return competitionRows;
+}
+
 module.exports = {
   getCompetition,
   getCompetitionById,
   createCompetition,
   updateCompetition,
   deleteCompetition,
-  getPosterPath
+  getPosterPath,
+  getPdfPath
 };
 
 

@@ -3,19 +3,37 @@
 const multer = require('multer');
 const path = require('path');
 
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       const absolutePath = path.resolve(__dirname, 'public', 'images')
+//       cb(null, 'public/images');
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, Date.now() + path.extname(file.originalname));
+//       // console.log('Date.now : ', Date.now);
+//       // console.log('extname : ', path.extname(file.originalname));
+//     }
+// });
+
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      const absolutePath = path.resolve(__dirname, 'public', 'images')
-      cb(null, 'public/images');
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + path.extname(file.originalname));
-      // console.log('Date.now : ', Date.now);
-      // console.log('extname : ', path.extname(file.originalname));
-    }
+  destination: function (req, file, cb) {
+      let uploadPath = '';
+      if (file.mimetype === 'application/pdf') {
+          uploadPath = 'public/pdfs';
+      } else if (file.mimetype.startsWith('image/')) {
+          uploadPath = 'public/images';
+          console.log(file.mimetype)
+      }
+      cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
 });
 
 const upload = multer({ storage: storage }); // multer 설정
+
 module.exports = function (app) {
     const competition = require('./competitionController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
@@ -28,18 +46,24 @@ module.exports = function (app) {
     // id값을 지정해서 특정 공지 반환
     app.get('/api/competition/:competitionId', competition.getCompetition);
 
-    // 공지 추가
-    app.post('/api/competition', upload.single('photo'), competition.registCompetition);
+    // 공지 추가, maxCount 값을 조절해서 최대로 업로드 할 pdf, photo 개수 조절
+    app.post('/api/competition', upload.fields([
+      { name: 'photo', maxCount: 3 },
+      { name: 'pdf', maxCount: 3 }
+    ]), competition.registCompetition);
+   
 
     // id값을 지정해서 공지 수정
-    app.put('/api/competition/:competitionId', upload.single('photo'), competition.updateCompetition);
+    app.put('/api/competition/:competitionId', upload.fields([
+      { name: 'photo', maxCount: 3 },
+      { name: 'pdf', maxCount: 3 }
+    ]), competition.updateCompetition);
     
     // id값을 지정해서 공지 삭제
     app.delete('/api/competition/:competitionId', competition.deleteCompetition);
 };
 
-
-// app.post('/upload', upload.single('photo'), competition.uploadImage)
+// app.post('/api/competition', upload.single('photo'), competition.registCompetition);
 
 // 0. 테스트 API
 // app.get('/app/test', user.getTest)

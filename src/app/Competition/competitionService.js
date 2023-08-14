@@ -15,16 +15,18 @@ const views = require("../../../views/template");
 const multer = require('multer');
 const path = require('path');
 
+const util = require('util');
+const unlinkPromise = util.promisify(fs.unlink); // Promisify fs.unlink for easier use
+
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 // 대회 create
 exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
-    prize, pre_date, final_date, poster_path) {
+    prize, pre_date, final_date, poster_path, pdf_path) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
         const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path]
-
+            prize, pre_date, final_date, poster_path, pdf_path]
         const createCompetitionResult = await competitionDao.createCompetition(connection, createCompetitionParams);
         console.log(`추가된 경기 id : ${createCompetitionResult.insertId}`)
         connection.release();
@@ -41,8 +43,7 @@ exports.updateCompetition = async function (competitionId, competition_title, co
     try {
         const connection = await pool.getConnection(async (conn) => conn);
         const updateCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path]
-
+            prize, pre_date, final_date, poster_path, pdf_path]
         const updateCompetitionResult = await competitionDao.updateCompetition(connection, competitionId, updateCompetitionParams);
         console.log(`수정된 경기 id : ${updateCompetitionResult.insertId}`)
         connection.release();
@@ -56,27 +57,85 @@ exports.updateCompetition = async function (competitionId, competition_title, co
 // 대회 delete
 exports.deleteCompetition = async function (competitionId) {
     try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const competitionPosterPath = await competitionDao.getPosterPath(connection, competitionId);
-        const posterPath = competitionPosterPath[0].poster_path;
-        const newPath = '\\' + competitionPosterPath[0].poster_path
-        const deleteCompetitionResult = await competitionDao.deleteCompetition(connection, competitionId);
-        console.log(newPath);
-        fs.unlink(newPath, (err) => {
-            if (err) {
-                console.error('파일 삭제 중 오류 발생', err)
-                connection.release();
-                return;
+        const connection = await pool.getConnection(); // Simplified getConnection call
+        const competitionPosterPaths = await competitionDao.getPosterPath(connection, competitionId);
+        const competitionPdfPaths = await competitionDao.getPdfPath(connection,competitionId);
+
+        const posterPaths = competitionPosterPaths[0].poster_path.split(',').map(item => `.\\${item}`);
+        const pdfPaths = competitionPdfPaths[0].pdf_path.split(',').map(item => `.\\${item}`);
+
+        // Use Promise.all for parallel file deletion
+        await Promise.all([...posterPaths, ...pdfPaths].map(async (filePath) => {
+            try {
+                await unlinkPromise(filePath);
+                console.log(`${filePath} deleted successfully.`);
+            } catch (err) {
+                console.error(`Error deleting file ${filePath}: ${err}`);
             }
-            console.log(`삭제된 경기 id : ${competitionId}`)
-            connection.release();
-        });
-        return response(baseResponse.SUCCESS);
-    } catch (err) {
-        logger.error(`App - deleteCompetition Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
+        }));
+
+        const deleteCompetitionResult = await competitionDao.deleteCompetition(connection, competitionId);
+        connection.release();
+        return deleteCompetitionResult;
+    } catch (error) {
+        console.error(`Error in deleteCompetition: ${error}`);
+        throw error;
     }
-}
+};
+// exports.deleteCompetition = async function (competitionId) {
+//     try {
+//         const connection = await pool.getConnection(async (conn) => conn);
+//         const competitionPosterPath = await competitionDao.getPosterPath(connection, competitionId);
+//         const posterPath = competitionPosterPath[0].poster_path;
+//         const pdfPath = competitionPosterPath[0].pad_path;
+
+//         let posterPathArray = posterPath.split(',');
+//         let pdfPathArray = pdfPath.split(',');
+
+//         posterPathArray = posterPathArray.map(item => '.\\' + item);
+//         pdfPathArray = pdfPathArray.map(item => '.\\' + item);
+
+//         // const newPath = '.\\' + competitionPosterPath[0].poster_path;
+        
+//         try {
+//             for (const posterPath of posterPathArray) {
+//                 await fs.unlink(posterPath);
+//                 console.log(`${posterPath} deleted successfully.`);
+//             }
+//             for (const pdfPath of pdfPathArray){
+//                 await fs.unlink(pdfPath);
+//                 console.log(`${pdfPath} deleted successfully`);
+//             }
+//             const deleteCompetitionResult = await competitionDao.deleteCompetition(connection, competitionId);
+//             connection.release();
+//             return deleteCompetitionResult;
+//         }
+//         catch (err){
+//             console.error(`Error deleteing files : ${err}`);
+//             return errResponse(baseResponse.DB_ERROR);
+//         }
+//     } catch (error) {
+//         console.error(`Error in deleteCompetition: ${error}`);
+//         throw error;
+//     }  
+// }
+        // console.log(newPath);
+        // fs.unlink(newPath, (err) => {
+        //     if (err) {
+        //         console.error('파일 삭제 중 오류 발생', err)
+        //         connection.release();
+        //         return;
+        //     }
+        //     console.log(`삭제된 경기 id : ${competitionId}`)
+        //     connection.release();
+        // });
+        // return response(baseResponse.SUCCESS);
+        // } 
+    // catch (err) {
+    //     logger.error(`App - deleteCompetition Service error\n: ${err.message}`);
+    //     return errResponse(baseResponse.DB_ERROR);
+    // }
+
 
 
 
