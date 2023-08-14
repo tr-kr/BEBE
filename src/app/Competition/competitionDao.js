@@ -20,6 +20,7 @@ async function getCompetitionById(connection, id) {
   return competitionRows;
 }
 
+
 // 대회 등록
 async function createCompetition(connection, createCompetitionParams) {
   // host_id는 로그인 기능 구현 후 추가하기

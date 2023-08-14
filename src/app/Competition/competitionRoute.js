@@ -20,6 +20,7 @@ module.exports = function (app) {
     const competition = require('./competitionController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
     
+    
     app.get('/', competition.index);
 
     // 공지 반환

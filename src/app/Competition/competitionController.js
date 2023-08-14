@@ -18,6 +18,7 @@ exports.uploadImage = async function (req,res){
       res.status(200).json({ imageUrl: uploadedFilePath });
 }
 
+
 /*
  * API No. 0
  * API Name : 메인화면 반환
