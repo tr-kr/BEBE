@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+</head>
+<body>
+  <h1>회원 가입</h1>
+  <label for="userId">ID: </label>
+  <input type="text" id="userId" name="userId">
+  <button id="checkIDButton">ID중복체크</button><br>
+  <label for="password">비밀번호: </label>
+  <input type="text" id="password" name="password"> /* 디버깅용, password타입 권장*/
+  <br>
+  <label for="nickname">닉네임: </label>
+  <input type="text" id="nickname" name="nickname"><br>
+
+  
+  <label for="inputemail">이메일: </label>
+  <input type="text" id="email" name="email">
+  <button id="checkEmailButton">이메일중복체크</button><br>
+
+  <label for="birth">생년월일: </label>
+  <input type="date" id="birth" name="birth">
+
+
+
+  <h1>연동 정보</h1>
+  <label for="discord">discord: </label>
+  <input type="text" id="discord" name="discord"><br>
+
+  <label for="riot">riot: </label>
+  <input type="text" id="riot" name="riot"><br>
+
+  <label for="school">school: </label>
+  <input type="text" id="school" name="schoold"><br><br><br>
+
+  <button id="register">회원가입</button><br>
+
+
+
+
+
+
+
+
+  <script>
+    accountID = 0;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      //const authemailButton = document.getElementById('authemailButton');
+
+      //ID중복 확인
+      const checkIDButton = document.getElementById('checkIDButton');
+      const IDBox = document.getElementById('userId');
+      checkIDButton.addEventListener('click', ()=>{
+        account = document.getElementById('userId').value;
+        
+        const requestData = { account : account};
+
+        fetch(`http://localhost:3000/api/users/register/accountCheck`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            console.log(data);
+            if(data.isSuccess === true)  IDBox.disabled = true;
+          })
+          .catch(error => console.error('Error:', error));
+      });
+
+
+
+
+      //이메일중복 확인
+      const checkEmailButton = document.getElementById('checkEmailButton');
+      const EmailBox = document.getElementById('email');
+      checkEmailButton.addEventListener('click', ()=>{
+        email = document.getElementById('email').value;
+        
+        const requestData = { email : email};
+
+        fetch(`http://localhost:3000/api/users/register/emailCheck`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            console.log(data);
+            if(data.isSuccess === true)  EmailBox.disabled = true;
+          })
+          .catch(error => console.error('Error:', error));
+
+      });
+
+
+
+
+
+      //회원가입
+      const registerButton = document.getElementById('register');
+      registerButton.addEventListener('click', ()=>{
+        account = document.getElementById('userId').value;
+        password = document.getElementById('password').value;
+        nickname = document.getElementById('nickname').value;
+        email = document.getElementById('email').value;
+        birth = document.getElementById('birth').value;
+        const requestData = {
+           account : account,
+           password : password,
+           nickname : nickname,
+           email : email
+          };
+
+        fetch(`http://localhost:3000/api/users/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            redirection('./');
+          })
+          .catch(error => console.error('Error:', error));
+      });
+
+
+
+
+
+
+
+
+
+      //유저 불러오기
+      const user = document.getElementById('userButton');
+      user.addEventListener('click', () =>{
+        accountID = document.getElementById('user').value;
+
+        fetch(`http://localhost:3000/api/user/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+            data = data.result;
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          document.getElementById('nickname').value = data.nickname;
+          document.getElementById('userId').value = data.account;
+          document.getElementById('email').value = data.email;
+          document.getElementById('password').value = data.password;
+          document.getElementById('discord').value = data.discord_auth;
+          document.getElementById('riot').value = data.riot_auth;
+          document.getElementById('school').value = data.school_auth;
+          document.getElementById('competition').value = data.played_competition;
+          document.getElementById('match').value = data.played_match;
+          document.getElementById('win').value = data.win;
+          document.getElementById('lose').value = data.lose;
+          //document.getElementById('ID').value = data.user_id;
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+          redirection
+        });
+
+
+
+        //////////////////////////////////
+        //참여한 대회 리스트 가져오기
+        fetch(`http://localhost:3000/api/user/playList/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          data = data.result;
+
+          const playList = document.getElementById("playList");
+          playList.innerHTML = '';
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          data.forEach(data => {
+            playList.append('competition_id: ', data.competition_id, ', ranking: ', data.ranking);
+            playList.innerHTML += '<br>';
+          });
+          
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+        });
+
+        //////////////////////////////////
+        //개최한 대회 리스트 가져오기
+        fetch(`http://localhost:3000/api/user/hostList/${accountID}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          data = data.result;
+
+          const hostList = document.getElementById("hostList");
+          hostList.innerHTML = '';
+          // 받아온 데이터를 텍스트박스에 채워 넣음
+          console.log(data);
+          data.forEach(data => {
+            hostList.append('competition_id: ', data.id);
+            hostList.innerHTML += '<br>';
+          });
+          
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+          alert('유효한 User ID가 아닙니다.');
+        });
+
+
+
+      });
+      
+
+
+    });
+  </script>
+</body>
+</html>

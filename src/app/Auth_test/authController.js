@@ -53,6 +53,69 @@ exports.postUsers = async function (req, res) {
     return res.send(signUpResponse);
 };
 
+exports.register = async function (req, res) {
+
+    /**
+     * Body: email, password, nickname
+     */
+    const {account, password, nickname, email, birth} = req.body;
+
+    const signUpResponse = await userService.createUser(
+        account,
+        email,
+        password,
+        nickname,
+        birth
+    );
+    return res.send(signUpResponse);
+};
+exports.verifyEmail = async function (req, res) {
+
+    /**
+     * Body: email, password, nickname
+     */
+    const {email} = req.body;
+
+    const verifyResponse = await userService.verifyEmail(
+        email
+    );
+
+    return res.send(verifyResponse);
+};
+
+
+
+exports.accountCheckTest = async function (req, res){
+    const {account} = req.body;
+    if(account.length == 0) 
+        return res.send(baseResponse.USER_USERID_EMPTY);
+
+
+    const accountCheckResponse = await userProvider.accountCheckTest(
+        account
+    );
+    if (accountCheckResponse.length > 0)
+        return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_ACCOUNT));
+
+    return res.send(baseResponse.SUCCESS);
+};
+exports.emailCheckTest = async function (req, res){
+    const {email} = req.body;
+    if(email.length == 0) 
+        return res.send(baseResponse.SIGNIN_EMAIL_EMPTY);
+
+
+    const emailCheckResponse = await userProvider.emailCheck(
+        email
+    );
+    if (emailCheckResponse.length > 0)
+        return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL));
+
+    return res.send(baseResponse.SUCCESS);
+};
+
+
+
 /**
  * API No. 2
  * API Name : 유저 조회 API (+ 이메일로 검색 조회)
@@ -124,7 +187,7 @@ exports.updateUser = async function (req, res) {
     const signUpResponse = await userService.editUser(
         id,
         nickname,
-        password,
+        password
     );
 
     return res.send(signUpResponse);

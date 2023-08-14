@@ -8,7 +8,15 @@
 <body>
   <input type="text" id="user" name="user">
   <button id="userButton">회원번호로 불러오기</button>
-  <button id="withdraw">회원탈퇴</button>
+  <button id="withdraw">회원탈퇴</button><br><br>
+
+  <label for="inputemail">이메일: </label>
+  <input type="text" id="inputemail" name="inputemail">
+  <button id="authemailButton">이메일인증</button><br>
+
+  <label for="result">결과: </label>
+  <input type="text" id="result" name="result">
+
   <h1>회원 정보</h1>
   <label for="nickname">닉네임: </label>
   <input type="text" id="nickname" name="nickname">
@@ -18,6 +26,8 @@
   <input type="text" id="userId" name="userId"><br>
   <label for="userId">email: </label>
   <input type="text" id="email" name="email"><br>
+  <label for="userId">verifiedEmail: </label>
+  <input type="text" id="verifiedEmail" name="verifiedEmail"><br>
   
   <label for="password">비밀번호: </label>
   <input type="text" id="password" name="password"> /* 디버깅용, password타입 권장*/
@@ -66,13 +76,51 @@
     accountID = 0;
     
     document.addEventListener('DOMContentLoaded', () => {
-      
+      const authemailButton = document.getElementById('authemailButton');
+
+      //닉네임 변경
+      authemailButton.addEventListener('click', () => {
+
+        const email = document.getElementById('inputemail').value;
+
+        // 서버로 보낼 요청 데이터
+        const requestData = {
+          email: email,
+          //password: null,
+        };
+
+        // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
+        fetch(`http://localhost:3000/send-verification-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          alert('이메일발송성공');
+        })
+        .catch((error) => {
+          console.error('Error updating user data:', error);
+          alert('이메일발송 실패 실패했습니다.');
+        });
+      });
+
+
+
+
+
+
+
+
       //유저 불러오기
       const user = document.getElementById('userButton');
       user.addEventListener('click', () =>{
         accountID = document.getElementById('user').value;
 
-        fetch(`http://localhost:3000/user/${accountID}`)
+        fetch(`http://localhost:3000/api/user/${accountID}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -86,6 +134,7 @@
           document.getElementById('nickname').value = data.nickname;
           document.getElementById('userId').value = data.account;
           document.getElementById('email').value = data.email;
+          document.getElementById('verifiedEmail').value = data.verifiedEmail;
           document.getElementById('password').value = data.password;
           document.getElementById('discord').value = data.discord_auth;
           document.getElementById('riot').value = data.riot_auth;
@@ -104,7 +153,7 @@
 
         //////////////////////////////////
         //참여한 대회 리스트 가져오기
-        fetch(`http://localhost:3000/user/playList/${accountID}`)
+        fetch(`http://localhost:3000/api/user/playList/${accountID}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -131,7 +180,7 @@
 
         //////////////////////////////////
         //개최한 대회 리스트 가져오기
-        fetch(`http://localhost:3000/user/hostList/${accountID}`)
+        fetch(`http://localhost:3000/api/user/hostList/${accountID}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -179,7 +228,7 @@
         };
 
         // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
-        fetch(`http://localhost:3000/user/${accountID}`, {
+        fetch(`http://localhost:3000/api/user/${accountID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -213,7 +262,7 @@
         };
 
         // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
-        fetch(`http://localhost:3000/user/${accountID}`, {
+        fetch(`http://localhost:3000/api/user/${accountID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

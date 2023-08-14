@@ -33,6 +33,7 @@ module.exports = {
 
     // Response error
     SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 400, "message":"중복된 이메일입니다." },
+    SIGNUP_REDUNDANT_ACCOUNT : { "isSuccess": false, "code": 400, "message":"중복된 account입니다." },
     SIGNUP_REDUNDANT_NICKNAME : { "isSuccess": false, "code": 400, "message":"중복된 닉네임입니다." },
 
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 404, "message": "아이디가 잘못 되었습니다." },

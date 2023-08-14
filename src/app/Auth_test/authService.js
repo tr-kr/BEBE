@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (email, password, nickname) {
+exports.createUser = async function (account, email, password, nickname, birth) {
     try {
         // 이메일 중복 확인
         const emailRows = await userProvider.emailCheck(email);
@@ -26,11 +26,11 @@ exports.createUser = async function (email, password, nickname) {
             .update(password)
             .digest("hex");
 
-        const insertUserInfoParams = [email, hashedPassword, nickname];
+        const insertUserInfoParams = [account, email, hashedPassword, nickname, birth];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
-        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+        const userIdResult = await userDao.insertUser(connection, insertUserInfoParams);
         console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
@@ -41,6 +41,20 @@ exports.createUser = async function (email, password, nickname) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+exports.verifyEmail = async function (email) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const userIdResult = await userDao.verifyEmail(connection, email);
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - createUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
 
 
 // TODO: After 로그인 인증 방법 (JWT)

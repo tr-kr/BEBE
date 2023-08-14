@@ -12,11 +12,22 @@ async function selectUser(connection) {
 async function selectUserEmail(connection, email) {
   const selectUserEmailQuery = `
                 SELECT email, nickname 
-                FROM UserInfo 
+                FROM User 
                 WHERE email = ?;
                 `;
   const [emailRows] = await connection.query(selectUserEmailQuery, email);
   return emailRows;
+}
+
+// account로 회원 조회
+async function selectUserAccountTest(connection, account) {
+  const selectUserAccountQuery = `
+                SELECT account, nickname 
+                FROM User
+                WHERE account = ?;
+                `;
+  const [accountRows] = await connection.query(selectUserAccountQuery, account);
+  return accountRows;
 }
 
 // userId 회원 조회
@@ -31,10 +42,10 @@ async function selectUserId(connection, userId) {
 }
 
 // 유저 생성
-async function insertUserInfo(connection, insertUserInfoParams) {
+async function insertUser(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO UserInfo(email, password, nickname)
-        VALUES (?, ?, ?);
+        INSERT INTO User(account, email, password, nickname, birth, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
@@ -43,6 +54,18 @@ async function insertUserInfo(connection, insertUserInfoParams) {
 
   return insertUserInfoRow;
 }
+// 이메일인증
+async function verifyEmail(connection, email) {
+  const selectUserEmailQuery = `
+                UPDATE User 
+                SET verifiedEmail = true
+                WHERE email = ?;
+                `;
+  const [emailRows] = await connection.query(selectUserEmailQuery, email);
+  return emailRows;
+}
+
+
 
 // 패스워드 체크
 async function selectUserPassword(connection, selectUserPasswordParams) {
@@ -85,9 +108,11 @@ async function updateUserInfo(connection, id, nickname, password) {
 
 module.exports = {
   selectUser,
+  selectUserAccountTest,
   selectUserEmail,
+  verifyEmail,
   selectUserId,
-  insertUserInfo,
+  insertUser,
   selectUserPassword,
   selectUserAccount,
   updateUserInfo,
