@@ -2,7 +2,7 @@ module.exports = function (app) {
   const auth = require("./authController");
   const jwtMiddleware = require("../../../config/jwtMiddleware");
 
-  //rtrt
+  //rtrtrt
   /* 0. 테스트 API
   // app.get('/app/test', auth.getTest)
 
