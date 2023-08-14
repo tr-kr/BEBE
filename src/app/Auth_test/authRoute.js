@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
   secure : false,
   auth: {
     user: '이메일', // 보내는 이메일 주소
-    pass: '패스워드' // 비밀번호 또는 액세스 토큰
+    pass: '비밀번호' // 비밀번호 또는 액세스 토큰
   }
 });
 
