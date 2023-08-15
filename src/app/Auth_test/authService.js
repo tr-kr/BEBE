@@ -48,6 +48,8 @@ exports.verifyEmail = async function (email) {
 
         const userIdResult = await userDao.verifyEmail(connection, email);
         connection.release();
+        //console.log(`서비스:`, email);
+
         return response(baseResponse.SUCCESS);
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);

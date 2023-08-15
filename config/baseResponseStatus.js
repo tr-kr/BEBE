@@ -15,6 +15,8 @@ module.exports = {
     SIGNUP_PASSWORD_LENGTH : { "isSuccess": false, "code": 400, "message":"비밀번호는 6~20자리를 입력해주세요." },
     SIGNUP_NICKNAME_EMPTY : { "isSuccess": false, "code": 400, "message":"닉네임을 입력 해주세요." },
     SIGNUP_NICKNAME_LENGTH : { "isSuccess": false,"code": 400,"message":"닉네임은 최대 20자리를 입력해주세요." },
+    SIGNUP_ACCOUNT_EMPTY : { "isSuccess": false, "code": 400, "message":"ID를 입력 해주세요." },
+    SIGNUP_ACCOUNT_LENGTH : { "isSuccess": false,"code": 400,"message":"ID는 최대 20자리를 입력해주세요." },
 
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 400, "message":"이메일을 입력해주세요" },
     SIGNIN_EMAIL_LENGTH : { "isSuccess": false, "code": 400, "message":"이메일은 30자리 미만으로 입력해주세요." },

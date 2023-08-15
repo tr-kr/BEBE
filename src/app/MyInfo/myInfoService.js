@@ -97,10 +97,15 @@ exports.postSignIn = async function (email, password) {
 };
 
 exports.editUser = async function (id, nickname, password, age, phone_number, email) {
+    const hashedPassword = await crypto
+    .createHash("sha512")
+    .update(password)
+    .digest("hex");
+
     try {
         console.log(id)
         const connection = await pool.getConnection(async (conn) => conn);
-        const editUserResult = await userDao.updateUserInfo(connection, id, nickname, password)
+        const editUserResult = await userDao.updateUserInfo(connection, id, nickname, hashedPassword);
         connection.release();
 
         return response(baseResponse.SUCCESS);

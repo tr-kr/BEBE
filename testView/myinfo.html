@@ -37,13 +37,16 @@
 
   <h1>연동 정보</h1>
   <label for="discord">discord: </label>
-  <input type="text" id="discord" name="discord"><br>
+  <input type="text" id="discord" name="discord">
+  <button id="authDiscordButton">디코인증</button><br>
 
   <label for="riot">riot: </label>
-  <input type="text" id="riot" name="riot"><br>
+  <input type="text" id="riot" name="riot">
+  <button id="authRiotButton">라이엇인증</button><br>
 
   <label for="school">school: </label>
-  <input type="text" id="school" name="schoold"><br>
+  <input type="text" id="school" name="schoold">
+  <button id="authEmailButton">학교/단체메일 인증</button><br>
 
 
 
@@ -134,7 +137,7 @@
           document.getElementById('nickname').value = data.nickname;
           document.getElementById('userId').value = data.account;
           document.getElementById('email').value = data.email;
-          document.getElementById('verifiedEmail').value = data.verifiedEmail;
+          document.getElementById('verifiedEmail').value = data.emailVerified;
           document.getElementById('password').value = data.password;
           document.getElementById('discord').value = data.discord_auth;
           document.getElementById('riot').value = data.riot_auth;

@@ -130,6 +130,7 @@ exports.updateUser = async function (req, res) {
      * Body: email, password, nickname
      */
     const {nickname, password, age, phone_number, email} = req.body;
+    
     const id = req.params.userId;
     // // 빈 값 체크
     // if (!email)

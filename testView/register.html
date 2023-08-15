@@ -14,8 +14,8 @@
   <input type="text" id="password" name="password"> /* 디버깅용, password타입 권장*/
   <br>
   <label for="nickname">닉네임: </label>
-  <input type="text" id="nickname" name="nickname"><br>
-
+  <input type="text" id="nickname" name="nickname">
+  <button id="checkNicknameButton">닉네임중복체크</button><br>
   
   <label for="inputemail">이메일: </label>
   <input type="text" id="email" name="email">
@@ -55,7 +55,7 @@
       const checkIDButton = document.getElementById('checkIDButton');
       const IDBox = document.getElementById('userId');
       checkIDButton.addEventListener('click', ()=>{
-        account = document.getElementById('userId').value;
+        account = IDBox.value;
         
         const requestData = { account : account};
 
@@ -82,7 +82,7 @@
       const checkEmailButton = document.getElementById('checkEmailButton');
       const EmailBox = document.getElementById('email');
       checkEmailButton.addEventListener('click', ()=>{
-        email = document.getElementById('email').value;
+        email = EmailBox.value;
         
         const requestData = { email : email};
 
@@ -98,6 +98,31 @@
             alert(data.message);
             console.log(data);
             if(data.isSuccess === true)  EmailBox.disabled = true;
+          })
+          .catch(error => console.error('Error:', error));
+
+      });
+
+      //닉네임중복 확인
+      const checkNicknameButton = document.getElementById('checkNicknameButton');
+      const NicknameBox = document.getElementById('nickname');
+      checkNicknameButton.addEventListener('click', ()=>{
+        nickname = NicknameBox.value;
+        
+        const requestData = { nickname : nickname};
+
+        fetch(`http://localhost:3000/api/users/register/nicknameCheck`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            console.log(data);
+            if(data.isSuccess === true)  NicknameBox.disabled = true;
           })
           .catch(error => console.error('Error:', error));
 
@@ -119,7 +144,8 @@
            account : account,
            password : password,
            nickname : nickname,
-           email : email
+           email : email,
+           birth : birth
           };
 
         fetch(`http://localhost:3000/api/users/register`, {
@@ -130,9 +156,28 @@
           body: JSON.stringify(requestData)
         })
           .then(response => response.json())
-          .then(data => {
+          .then(data => {//회원가입 성공시
             alert(data.message);
-            redirection('./');
+
+            if(data.isSuccess === true) 
+            fetch(`http://localhost:3000/send-verification-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({email : email})
+            })
+              .then(response => response.json())
+              .then(data => {
+                alert(data.message);
+                console.log(data);
+                if(data.isSuccess === true)  EmailBox.disabled = true;
+              })
+              .catch(error => console.error('Error:', error));
+            //이메일인증
+
+
+            //redirection('./');
           })
           .catch(error => console.error('Error:', error));
       });
