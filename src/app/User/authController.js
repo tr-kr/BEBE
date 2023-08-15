@@ -12,6 +12,23 @@ const expressSession = require("express-session");
 const { emit } = require("nodemon");
 const { append } = require("vary");
 
+ 
+//로그인light
+app.post('/login',async(req,res)=>{
+  const {id, password} = req.body;
+  const user = users.find(u=>u.id === id);
+  if(!user) {
+      return res.status(400).json('아이디 없음');
+  } else {
+      const isEqualPw = await bcrypt.compare(password,user.password);
+      console.log(isEqualPw);
+      if(isEqualPw) 
+          return res.status(200).json({msg : "로그인 성공!",user});
+      else 
+          return res.status(404).json({msg : "로그인 실패"});
+  }
+});
+
 /** */
 
 /**비밀번호 보완
@@ -163,7 +180,7 @@ exports.check = async function (req, res) {
   return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
 };*/
 
-/*로그인, 로그아웃
+//로그인light
 app.use(cookieParser());
 
 app.use(
@@ -232,9 +249,9 @@ const appServer = http.createServer(app);
 
 appServer.listen(app.get("port"), () => {
   console.log(`${app.get("port")}에서 서버실행중`);
-});*/
+});
 
-/*로그인
+//로그인 light
 exports.login = async function (req, res) {
   const { email, pw } = req.body;
   const sql = `SELECT * FROM User WHERE email="${email}"`;
@@ -264,9 +281,9 @@ exports.login = async function (req, res) {
       }
     }
   });
-};*/
+};
 
-//로그인 구현 light
+//로그인 light
 exports.login = async function (req, res, next) {
   var id = req.body.id;
   var pw = req.body.pw;
