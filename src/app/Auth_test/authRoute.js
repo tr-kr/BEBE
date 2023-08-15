@@ -11,6 +11,7 @@ module.exports = function (app) {
   const secretKey = secret.jwtsecret;
   const jwt = require("jsonwebtoken");
 
+<<<<<<< HEAD
   const transporter = nodemailer.createTransport({
     service: "Naver", // 이메일 서비스
     host: "smtp.naver.com",
@@ -21,6 +22,18 @@ module.exports = function (app) {
       pass: "@^^NAKss0010", // 비밀번호 또는 액세스 토큰
     },
   });
+=======
+const transporter = nodemailer.createTransport({
+  service: 'Naver', // 이메일 서비스
+  host: 'smtp.naver.com',
+  port: 587,
+  secure : false,
+  auth: {
+    user: '이메일', // 보내는 이메일 주소
+    pass: '비밀번호' // 비밀번호 또는 액세스 토큰
+  }
+});
+>>>>>>> daa8da6ef5a284deacb4199b22816f6ff93a0443
 
   app.post("/send-verification-email", (req, res) => {
     const { email } = req.body;
