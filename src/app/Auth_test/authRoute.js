@@ -1,111 +1,105 @@
-const { redirect } = require('react-router-dom');
+const { redirect } = require("react-router-dom");
 
-module.exports = function(app){
-    const user = require('./authController');
-    const jwtMiddleware = require('../../../config/jwtMiddleware');
+module.exports = function (app) {
+  const user = require("./authController");
+  const jwtMiddleware = require("../../../config/jwtMiddleware");
 
-    
-//made by ryu
-//////////////////////////////////////////////////////////////////
-const nodemailer = require('nodemailer');
-const secret = require('../../../config/secret');
-const secretKey = secret.jwtsecret;
-const jwt = require('jsonwebtoken');
+  //made by ryu
+  //////////////////////////////////////////////////////////////////
+  const nodemailer = require("nodemailer");
+  const secret = require("../../../config/secret");
+  const secretKey = secret.jwtsecret;
+  const jwt = require("jsonwebtoken");
 
-const transporter = nodemailer.createTransport({
-  service: 'Naver', // 이메일 서비스
-  host: 'smtp.naver.com',
-  port: 587,
-  secure : false,
-  auth: {
-    user: '이메일', // 보내는 이메일 주소
-    pass: '패스워드' // 비밀번호 또는 액세스 토큰
-  }
-});
+  const transporter = nodemailer.createTransport({
+    service: "Naver", // 이메일 서비스
+    host: "smtp.naver.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "richknk@naver.com", // 보내는 이메일 주소
+      pass: "@^^NAKss0010", // 비밀번호 또는 액세스 토큰
+    },
+  });
 
-    app.post('/send-verification-email', (req, res) => {
+  app.post("/send-verification-email", (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    //const email = `ryu_eclipse@naver.com`;
+    // 토큰 생성
+    const token = jwt.sign({ email }, secretKey, { expiresIn: "30000" });
 
-      const { email } = req.body;
-      console.log(email);
-      //const email = `ryu_eclipse@naver.com`;
-      // 토큰 생성
-      const token = jwt.sign({ email }, secretKey, { expiresIn: '30000' });
-    
-      // 이메일 내용 템플릿 생성
-      const emailContent = `
+    // 이메일 내용 템플릿 생성
+    const emailContent = `
         <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
         http://localhost:3000/verify?token=${token}
       `;
-    
-      const mailOptions = {
-        from: 'won000111@naver.com',
-        to: email,
-        subject: '본인 확인 이메일',
-        html: emailContent
-      };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error('이메일 전송 오류:', error);
-          res.status(500).json({ message: '이메일 전송 오류' });
-        } else {
-          console.log('이메일 전송 성공:', info.response);
-          res.status(200).json({ message: '이메일 전송 완료' });
-        }
-      });
-    });
-    
-    app.get('/verify', (req, res) => {
-      const { token } = req.query;
-    
-      try {
-        const decoded = jwt.verify(token, secretKey);
-        console.log(decoded.email);
-        user.verifyEmail(decoded.email);
-        // 토큰 유효한 경우
-        // 본인 확인 완료 처리 후 클라이언트에게 키 전송 등의 작업 수행
-        res.status(200).json({ message: '본인 확인이 완료되었습니다.' });
-      } catch (error) {
-        // 토큰 무효한 경우
-        res.status(400).json({ message: '유효하지 않은 토큰' });
+    const mailOptions = {
+      from: "won000111@naver.com",
+      to: email,
+      subject: "본인 확인 이메일",
+      html: emailContent,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("이메일 전송 오류:", error);
+        res.status(500).json({ message: "이메일 전송 오류" });
+      } else {
+        console.log("이메일 전송 성공:", info.response);
+        res.status(200).json({ message: "이메일 전송 완료" });
       }
     });
-///////////////////////////////////////////////////////////////////////
+  });
 
+  app.get("/verify", (req, res) => {
+    const { token } = req.query;
 
-    // 0. 테스트 API
-    // app.get('/app/test', user.getTest)
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      console.log(decoded.email);
+      user.verifyEmail(decoded.email);
+      // 토큰 유효한 경우
+      // 본인 확인 완료 처리 후 클라이언트에게 키 전송 등의 작업 수행
+      res.status(200).json({ message: "본인 확인이 완료되었습니다." });
+    } catch (error) {
+      // 토큰 무효한 경우
+      res.status(400).json({ message: "유효하지 않은 토큰" });
+    }
+  });
+  ///////////////////////////////////////////////////////////////////////
 
-    // // 1. 유저 생성 (회원가입) API
-    app.post('/app/users', user.postUsers);
+  // 0. 테스트 API
+  // app.get('/app/test', user.getTest)
 
-    /////////////////////////////////////회원가입
-    app.post('/api/users/register/accountCheck', user.accountCheckTest);
-    app.post('/api/users/register/emailCheck', user.emailCheckTest);
-    app.post('/api/users/register', user.register);
-    //app.post('/api/users/verify-email', user.verifyEmail);
+  // // 1. 유저 생성 (회원가입) API
+  app.post("/app/users", user.postUsers);
 
-    
-    // 2. 유저 조회 API (+ 검색)
-    app.get('/app/users',user.getUsers); 
+  /////////////////////////////////////회원가입
+  app.post("/api/users/register/accountCheck", user.accountCheckTest);
+  app.post("/api/users/register/emailCheck", user.emailCheckTest);
+  app.post("/api/users/register", user.register);
+  //app.post('/api/users/verify-email', user.verifyEmail);
 
+  // 2. 유저 조회 API (+ 검색)
+  app.get("/app/users", user.getUsers);
 
+  // TODO: After 로그인 인증 방법 (JWT)
+  // 로그인 하기 API (JWT 생성)
+  app.post("/app/login", user.login);
 
-    // TODO: After 로그인 인증 방법 (JWT)
-    // 로그인 하기 API (JWT 생성)
-    app.post('/app/login', user.login);
+  // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
+  app.patch("/app/users/:userId", jwtMiddleware, user.patchUsers);
+  ////////////////////////////////////////////////////////////////
+  //작성자 : 류지원
+  //디스코드, 라이엇 인증 API
 
-    // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
-    app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
-////////////////////////////////////////////////////////////////
-//작성자 : 류지원
-//디스코드, 라이엇 인증 API
-
-/*     app.get('/api/auth/discord', user.tryAuthDiscord);
+  /*     app.get('/api/auth/discord', user.tryAuthDiscord);
 
     //계정인증시 콜백
     app.get('/api/auth/discord/success', user.authDiscord); */
-/* 
+  /* 
 const axios = require('axios');
 const CLIENT_ID = '1138439231073693736';
 const CLIENT_SECRET = '4f34a94c10adfd93b336fd0265fc8157ea9421b6a35c911e2559fa0f6c9c15d1';
@@ -163,14 +157,11 @@ app.get('/api/auth/discord/success', async (req, res) => {
 
 */
 };
- 
-
-
-
-
 
 // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
 // JWT 검증 API
 // app.get('/app/auto-login', jwtMiddleware, user.check);
 
 // TODO: 탈퇴하기 API
+
+//로그인
