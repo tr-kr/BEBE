@@ -40,16 +40,12 @@
 
 
 
-
-
-
-
-
   <script>
     accountID = 0;
     
     document.addEventListener('DOMContentLoaded', () => {
       //const authemailButton = document.getElementById('authemailButton');
+
 
       //ID중복 확인
       const checkIDButton = document.getElementById('checkIDButton');
@@ -59,7 +55,7 @@
         
         const requestData = { account : account};
 
-        fetch(`http://localhost:3000/api/users/register/accountCheck`, {
+        fetch(`http://localhost:3000/api/signup/accountCheck`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -86,7 +82,7 @@
         
         const requestData = { email : email};
 
-        fetch(`http://localhost:3000/api/users/register/emailCheck`, {
+        fetch(`http://localhost:3000/api/signup/emailCheck`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -111,7 +107,7 @@
         
         const requestData = { nickname : nickname};
 
-        fetch(`http://localhost:3000/api/users/register/nicknameCheck`, {
+        fetch(`http://localhost:3000/api/signup/nicknameCheck`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -127,8 +123,6 @@
           .catch(error => console.error('Error:', error));
 
       });
-
-
 
 
 
@@ -148,7 +142,7 @@
            birth : birth
           };
 
-        fetch(`http://localhost:3000/api/users/register`, {
+        fetch(`http://localhost:3000/api/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -160,7 +154,7 @@
             alert(data.message);
 
             if(data.isSuccess === true) 
-            fetch(`http://localhost:3000/send-verification-email`, {
+            fetch(`http://localhost:3000/api/verification/send-verification-email`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -174,120 +168,15 @@
                 if(data.isSuccess === true)  EmailBox.disabled = true;
               })
               .catch(error => console.error('Error:', error));
-            //이메일인증
-
+            //이메일인
 
             //redirection('./');
           })
           .catch(error => console.error('Error:', error));
       });
-
-
-
-
-
-
-
-
-
-      //유저 불러오기
-      const user = document.getElementById('userButton');
-      user.addEventListener('click', () =>{
-        accountID = document.getElementById('user').value;
-
-        fetch(`http://localhost:3000/api/user/${accountID}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-            data = data.result;
-          // 받아온 데이터를 텍스트박스에 채워 넣음
-          console.log(data);
-          document.getElementById('nickname').value = data.nickname;
-          document.getElementById('userId').value = data.account;
-          document.getElementById('email').value = data.email;
-          document.getElementById('password').value = data.password;
-          document.getElementById('discord').value = data.discord_auth;
-          document.getElementById('riot').value = data.riot_auth;
-          document.getElementById('school').value = data.school_auth;
-          document.getElementById('competition').value = data.played_competition;
-          document.getElementById('match').value = data.played_match;
-          document.getElementById('win').value = data.win;
-          document.getElementById('lose').value = data.lose;
-          //document.getElementById('ID').value = data.user_id;
-        })
-        .catch(error => {
-          console.error('API 호출 오류:', error);
-          alert('유효한 User ID가 아닙니다.');
-          redirection
-        });
-
-
-
-        //////////////////////////////////
-        //참여한 대회 리스트 가져오기
-        fetch(`http://localhost:3000/api/user/playList/${accountID}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          data = data.result;
-
-          const playList = document.getElementById("playList");
-          playList.innerHTML = '';
-          // 받아온 데이터를 텍스트박스에 채워 넣음
-          console.log(data);
-          data.forEach(data => {
-            playList.append('competition_id: ', data.competition_id, ', ranking: ', data.ranking);
-            playList.innerHTML += '<br>';
-          });
-          
-        })
-        .catch(error => {
-          console.error('API 호출 오류:', error);
-          alert('유효한 User ID가 아닙니다.');
-        });
-
-        //////////////////////////////////
-        //개최한 대회 리스트 가져오기
-        fetch(`http://localhost:3000/api/user/hostList/${accountID}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          data = data.result;
-
-          const hostList = document.getElementById("hostList");
-          hostList.innerHTML = '';
-          // 받아온 데이터를 텍스트박스에 채워 넣음
-          console.log(data);
-          data.forEach(data => {
-            hostList.append('competition_id: ', data.id);
-            hostList.innerHTML += '<br>';
-          });
-          
-        })
-        .catch(error => {
-          console.error('API 호출 오류:', error);
-          alert('유효한 User ID가 아닙니다.');
-        });
-
-
-
       });
+
       
-
-
-    });
   </script>
 </body>
 </html>

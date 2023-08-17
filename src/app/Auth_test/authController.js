@@ -87,8 +87,8 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure : false,
     auth: {
-      user: '이메일', // 보내는 이메일 주소
-      pass: '패스워드' // 비밀번호 또는 액세스 토큰
+      user: 'won000111@naver.com', // 보내는 이메일 주소
+      pass: '@@won0102' // 비밀번호 또는 액세스 토큰
     }
   });
 
@@ -104,7 +104,7 @@ exports.send_verification_email = async function(req, res){
     // 이메일 내용 템플릿 생성
     const emailContent = `
       <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
-      http://localhost:3000/verify?token=${token}
+      http://localhost:3000/api/verification/verify?token=${token}
     `;
   
     const mailOptions = {

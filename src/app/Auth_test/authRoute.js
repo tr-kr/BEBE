@@ -99,27 +99,27 @@ module.exports = function(app){
 // });
 
 
-// Riot Games API Key
-const RIOT_API_KEY = 'YOUR_RIOT_API_KEY';
+// // Riot Games API Key
+// const RIOT_API_KEY = 'YOUR_RIOT_API_KEY';
 
-// 라이엇 계정 인증 API 엔드포인트
-const summonerName = 'SummonerName'; // 라이엇 계정명
+// // 라이엇 계정 인증 API 엔드포인트
+// const summonerName = 'SummonerName'; // 라이엇 계정명
 
-const apiUrl = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(summonerName)}`;
+// const apiUrl = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encodeURIComponent(summonerName)}`;
 
-// API 호출
-axios.get(apiUrl, {
-  headers: {
-    'X-Riot-Token': RIOT_API_KEY
-  }
-})
-.then(response => {
-  const summonerData = response.data;
-  console.log(summonerData);
-})
-.catch(error => {
-  console.error('Error:', error);
-});
+// // API 호출
+// axios.get(apiUrl, {
+//   headers: {
+//     'X-Riot-Token': RIOT_API_KEY
+//   }
+// })
+// .then(response => {
+//   const summonerData = response.data;
+//   console.log(summonerData);
+// })
+// .catch(error => {
+//   console.error('Error:', error);
+// });
 
 
 
