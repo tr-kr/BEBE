@@ -12,8 +12,39 @@ const expressSession = require("express-session");
 const { emit } = require("nodemon");
 const { append } = require("vary");
 
- 
-//로그인light
+//로그인 light
+const logger = require("winston"); // 또는 다른 로깅 라이브러리 사용
+
+exports.login = async function (req, res) {
+  try {
+    const { account, password } = req.body;
+    if (!account) {
+      return res.send(response(baseResponse.SIGNIN_EMAIL_EMPTY));
+    }
+    if (!password) {
+      return res.send(response(baseResponse.SIGNIN_PASSWORD_WRONG));
+    }
+
+    // if (!isRegexEmail(postLoginReq.email)) {
+    //   return res.json({
+    //     isSuccess: false,
+    //     code: POST_USERS_INVALID_EMAIL,
+    //     message: "Invalid email format.",
+    //   });
+    // }
+
+    const postLoginRes = await authService.login(account, password);
+    return res.json({
+      isSuccess: true,
+      data: postLoginRes,
+    });
+  } catch (exception) {
+    logger.error(`App - login error\n: ${exception.message}`);
+    return res.send(exception);
+  }
+};
+
+/*로그인light
 app.post('/login',async(req,res)=>{
   const {id, password} = req.body;
   const user = users.find(u=>u.id === id);
@@ -29,6 +60,188 @@ app.post('/login',async(req,res)=>{
   }
 });
 
+//로그인light
+app.use(cookieParser());
+
+app.use(
+  expressSession({
+    secret: "my key",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+exports.login = async function (req, res) {
+  console.log("로그인 함수가 실행됩니다.");
+
+  console.log(req.body.data);
+  console.log(req.password);
+
+  const paramID = req.body.id || req.query.id;
+  const pw = req.body.password || req.query.password;
+
+  if (req.session.user) {
+    console.log("이미 로그인 되었습니다.");
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf8" });
+    res.write("<h1> already Login</h1>");
+    res.write(`[ID] : ${paramID} [PW] : ${pw}`);
+    res.write('<a href="/api/example">예시로<a>');
+    res.end();
+  } else {
+    req.session.user = {
+      id: paramID,
+      pw: pw,
+      name: "UsersNames!!!",
+      authorized: true,
+    };
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf8" });
+    res.write("<h1>Login Success</h1>");
+    res.write(`[ID] : ${paramID} [PW] : ${pw}`);
+    res.write('<a href="/api/example">Move</a>');
+    res.end();
+  }
+  const { email, password } = req.body;
+
+  const SignInResponse = await userService.postSignIn(email, password);
+
+  return res.send("SignInResponse");
+};
+
+exports.logout = async function (req, res) {
+  console.log("로그아웃");
+
+  if (req.session.user) {
+    console.log("로그아웃중입니다!");
+    req.session.destory((err) => {
+      if (err) {
+        console.log("세션 삭제시에 에러가 발생했습니다.");
+        return;
+      }
+      console.log("세션이 삭제됐습니다.");
+      res.redirect("/login.html");
+    });
+  } else {
+    console.log("비로그인 상태입니다.");
+    res.redirect("/login.html");
+  }
+};
+const appServer = http.createServer(app);
+
+appServer.listen(app.get("port"), () => {
+  console.log(`${app.get("port")}에서 서버실행중`);
+});
+
+//로그인 light
+exports.login = async function (req, res) {
+  const { email, pw } = req.body;
+  const sql = `SELECT * FROM User WHERE email="${email}"`;
+  connection.query(sql, function (err, rows, fields) {
+    if (err) {
+      console.log(err);
+      return res.status(statusCode.NOT_FOUND).send(messageCode.REQUEST_FAIL);
+    } else {
+      if (rows.length === 0) {
+        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_USER);
+      } else if (pw !== rows[0].pw) {
+        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_PW);
+      } else {
+        var token = jwt.sign(
+          {
+            email: email,
+          },
+          process.env.JWT_SECRET
+        );
+
+        return res.status(statusCode.SUCCESS).json({
+          code: statusCode.SUCCESS,
+          message: messageCode.SIGN_IN_SUCCESS,
+          userIdx: rows[0].id,
+          token: token,
+        });
+      }
+    }
+  });
+};
+
+//로그인 light
+exports.login = async function (req, res, next) {
+  var id = req.body.id;
+  var pw = req.body.pw;
+
+  var query = "select salt, password from where userid='" + id + "';";
+  console.log(query);
+  connection.query(query, function (err, rows) {
+    if (err) throw err;
+    else {
+      if (rows.length == 0) {
+        //아이디 존재하지 않는 경우
+        console.log("아이디가 틀렸습니다");
+        res.redirect("/login");
+      } else {
+        var salt = rows[0].salt;
+        var password = rows[0].password;
+        const hashPassword = crypto
+          .createHash("sha512")
+          .update(pw + salt)
+          .diget("hex");
+        if (password == hashPassword) {
+          //로그인 성공
+          console.log("로그인 성공");
+          res.cookie("user", id, {
+            expires: new Date(Date.now() + 900000),
+            httpOnly: true,
+          });
+          res.redirect("/");
+        } else {
+          //로그인실패
+          console.log("비밀번호 틀렸습니다");
+          res.redirect("/login");
+        }
+      }
+    }
+  });
+};
+
+//로그인 light
+exports.login = async function (req) {
+  const json = {
+    code: 0,
+  };
+
+  const conn = await pool.getConnection();
+  const user_id = req.body.user_id;
+  const password = req.body.password;
+
+  const query = `SELECT user_id, password WHERE user_id = ?;`;
+  const [rows] = await conn.query(query, [user_id]);
+
+  if (rows.length > 0) {
+    const userPass = rows[0].password;
+
+    return new Promise((resolve, reject) => {
+      hasher(
+        { password: password, salt: userSalt },
+        (err, pass, salt, hash) => {
+          if (hash !== userPass) {
+            json.code = 100;
+            json.msg = "비밀번호가 틀렸습니다.";
+            json.data = {};
+          } else {
+            json.data = rows[0];
+          }
+          resolve(json);
+        }
+      );
+    });
+  } else {
+    json.code = 100;
+    json.msg = "찾을 수 없습니다.";
+    json.data = {};
+    return json;
+  }
+};*/
+
+//////////////////////////////////////////////////////////////////////////////////
 /** */
 
 /**비밀번호 보완
@@ -179,145 +392,3 @@ exports.check = async function (req, res) {
   console.log(userIdResult);
   return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
 };*/
-
-//로그인light
-app.use(cookieParser());
-
-app.use(
-  expressSession({
-    secret: "my key",
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-
-exports.login = async function (req, res) {
-  console.log("로그인 함수가 실행됩니다.");
-
-  console.log(req.body.data);
-  console.log(req.password);
-
-  const paramID = req.body.id || req.query.id;
-  const pw = req.body.password || req.query.password;
-
-  if (req.session.user) {
-    console.log("이미 로그인 되었습니다.");
-    res.writeHead(200, { "Content-Type": "text/html; charset=utf8" });
-    res.write("<h1> already Login</h1>");
-    res.write(`[ID] : ${paramID} [PW] : ${pw}`);
-    res.write('<a href="/api/example">예시로<a>');
-    res.end();
-  } else {
-    req.session.user = {
-      id: paramID,
-      pw: pw,
-      name: "UsersNames!!!",
-      authorized: true,
-    };
-    res.writeHead(200, { "Content-Type": "text/html; charset=utf8" });
-    res.write("<h1>Login Success</h1>");
-    res.write(`[ID] : ${paramID} [PW] : ${pw}`);
-    res.write('<a href="/api/example">Move</a>');
-    res.end();
-  }
-  const { email, password } = req.body;
-
-  const SignInResponse = await userService.postSignIn(email, password);
-
-  return res.send("SignInResponse");
-};
-
-exports.logout = async function (req, res) {
-  console.log("로그아웃");
-
-  if (req.session.user) {
-    console.log("로그아웃중입니다!");
-    req.session.destory((err) => {
-      if (err) {
-        console.log("세션 삭제시에 에러가 발생했습니다.");
-        return;
-      }
-      console.log("세션이 삭제됐습니다.");
-      res.redirect("/login.html");
-    });
-  } else {
-    console.log("비로그인 상태입니다.");
-    res.redirect("/login.html");
-  }
-};
-const appServer = http.createServer(app);
-
-appServer.listen(app.get("port"), () => {
-  console.log(`${app.get("port")}에서 서버실행중`);
-});
-
-//로그인 light
-exports.login = async function (req, res) {
-  const { email, pw } = req.body;
-  const sql = `SELECT * FROM User WHERE email="${email}"`;
-  connection.query(sql, function (err, rows, fields) {
-    if (err) {
-      console.log(err);
-      return res.status(statusCode.NOT_FOUND).send(messageCode.REQUEST_FAIL);
-    } else {
-      if (rows.length === 0) {
-        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_USER);
-      } else if (pw !== rows[0].pw) {
-        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_PW);
-      } else {
-        var token = jwt.sign(
-          {
-            email: email,
-          },
-          process.env.JWT_SECRET
-        );
-
-        return res.status(statusCode.SUCCESS).json({
-          code: statusCode.SUCCESS,
-          message: messageCode.SIGN_IN_SUCCESS,
-          userIdx: rows[0].id,
-          token: token,
-        });
-      }
-    }
-  });
-};
-
-//로그인 light
-exports.login = async function (req, res, next) {
-  var id = req.body.id;
-  var pw = req.body.pw;
-
-  var query = "select salt, password from where userid='" + id + "';";
-  console.log(query);
-  connection.query(query, function (err, rows) {
-    if (err) throw err;
-    else {
-      if (rows.length == 0) {
-        //아이디 존재하지 않는 경우
-        console.log("아이디가 틀렸습니다");
-        res.redirect("/login");
-      } else {
-        var salt = rows[0].salt;
-        var password = rows[0].password;
-        const hashPassword = crypto
-          .createHash("sha512")
-          .update(pw + salt)
-          .diget("hex");
-        if (password == hashPassword) {
-          //로그인 성공
-          console.log("로그인 성공");
-          res.cookie("user", id, {
-            expires: new Date(Date.now() + 900000),
-            httpOnly: true,
-          });
-          res.redirect("/");
-        } else {
-          //로그인실패
-          console.log("비밀번호 틀렸습니다");
-          res.redirect("/login");
-        }
-      }
-    }
-  });
-};

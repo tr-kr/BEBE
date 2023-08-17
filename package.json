@@ -28,6 +28,7 @@
     "nodemon": "^2.0.22",
     "react-router-dom": "^6.15.0",
     "regex-email": "^1.0.2",
+    "sha256": "^0.2.0",
     "vary": "^1.1.2",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.2.1"

@@ -11,8 +11,97 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { connect } = require("http2");
 
-const connection = await pool.getConnection(async (err, rows) => (err, rows));
+//로그인 light
+const SHA256 = require("sha256"); // SHA256 해시 함수 라이브러리 사용
+//const jwtService = require("./jwtService"); // jwtService 모듈의 경로에 따라 수정
 
+exports.login = async function (account, password) {
+  //async login(postLoginReq) {
+
+  try {
+    const users = await authProvider.getPwd(account, password); // 비밀번호
+    if (users.length === 0) return errResponse(baseResponse.SIGNIN_EMAIL_WRONG);
+    const user = users[0];
+    console.log(user);
+    let encryptPwd;
+
+    try {
+      encryptPwd = SHA256(password);
+      console.log(`암호화 된 비밀번호: ${encryptPwd}`);
+    } catch (e) {
+      throw new Error("PASSWORD_ENCRYPTION_ERROR");
+    }
+
+    if (user.password === encryptPwd) {
+      const useridx = user.id;
+      const jwt = jwtService.createJwt(useridx);
+      return {
+        useridx: useridx,
+        jwt: jwt,
+      };
+    } else {
+      throw new Error("FAILED_TO_LOGIN");
+    }
+  } catch (error) {
+    // 로깅 및 예외 처리
+    logger.error(error);
+    throw error; // 처리된 예외 다시 던지기
+  }
+  // }
+};
+// class AuthService {
+//   constructor(authDao, authProvider, jwtService) {
+//     this.authDao = authDao;
+//     this.authProvider = authProvider;
+//     this.jwtService = jwtService;
+//   }
+
+// }
+
+// module.exports = AuthService;
+
+/*로그인 light : JWT토큰 발급, 최초 로그인 했을 때 accessToken 과 refreshToken 발급해주는 부분
+require("dotenv").config();
+
+const token = () => {
+  return{
+    access(id){
+      return jwt.sign({id}, process.env.ACCESS_TOEKN_SECRET, {
+        expiresIn: "15m",
+      });
+    },
+    refresh(id){
+      return jwt.sign({id}, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "180 days",
+      });
+    }
+  }
+}
+
+exports.userLogin = (req, res) =>{
+  res.send('userLogin');
+}
+
+exports. authenticate =  (req, res, next) => {
+  if(req.query.id == 'hello'){ //id가 일치할 때
+    req.authData = {
+      status : 200,
+      message : 'Correct User Data',
+      jwt:{
+        accesToken : token().access(req.query.id),
+        refreshToken : token().refresh(req.query.id)
+      }
+    };
+  }else{
+    req.authData = {
+      status : 400,
+      message : 'Not Correct User Data'
+    };
+  }
+  next();
+}*/
+
+//////////////////////////////////////////////
 /* Service: Create, Update, Delete 비즈니스 로직 처리
 
 exports.createUser = async function (email, password, nickname) {
@@ -124,44 +213,5 @@ exports.editUser = async function (id, nickname) {
   } catch (err) {
     logger.error(`App - editUser Service error\n: ${err.message}`);
     return errResponse(baseResponse.DB_ERROR);
-  }
-};*/
-
-/*로그인 light
-exports.login = async function (req) {
-  const json = {
-    code: 0,
-  };
-
-  const conn = await pool.getConnection();
-  const user_id = req.body.user_id;
-  const password = req.body.password;
-
-  const query = `SELECT user_id, password WHERE user_id = ?;`;
-  const [rows] = await conn.query(query, [user_id]);
-
-  if (rows.length > 0) {
-    const userPass = rows[0].password;
-
-    return new Promise((resolve, reject) => {
-      hasher(
-        { password: password, salt: userSalt },
-        (err, pass, salt, hash) => {
-          if (hash !== userPass) {
-            json.code = 100;
-            json.msg = "비밀번호가 틀렸습니다.";
-            json.data = {};
-          } else {
-            json.data = rows[0];
-          }
-          resolve(json);
-        }
-      );
-    });
-  } else {
-    json.code = 100;
-    json.msg = "찾을 수 없습니다.";
-    json.data = {};
-    return json;
   }
 };*/
