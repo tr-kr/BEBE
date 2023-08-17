@@ -57,7 +57,7 @@ exports.updateCompetition = async function (competitionId, competition_title, co
 // 대회 delete
 exports.deleteCompetition = async function (competitionId) {
     try {
-        const connection = await pool.getConnection(); // Simplified getConnection call
+        const connection = await pool.getConnection();
         const competitionPosterPaths = await competitionDao.getPosterPath(connection, competitionId);
         const competitionPdfPaths = await competitionDao.getPdfPath(connection,competitionId);
 
@@ -82,6 +82,42 @@ exports.deleteCompetition = async function (competitionId) {
         throw error;
     }
 };
+
+
+/*
+exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
+    prize, pre_date, final_date, poster_path, pdf_path) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
+            prize, pre_date, final_date, poster_path, pdf_path]
+        const createCompetitionResult = await competitionDao.createCompetition(connection, createCompetitionParams);
+        console.log(`추가된 경기 id : ${createCompetitionResult.insertId}`)
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - createCompetition Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
+*/
+
+exports.entryCompetitionTeam = async function (competitionId){
+    try{
+        const connection = await pool.getConnection();
+        const entryCompetitionParams = [];
+        await competitionDao.entryCompetitionTeam(connection, entryCompetitionParams);
+
+        connection.release();
+        return response(database.SUCCESS);
+
+    } catch(error){
+        logger.error(`App - entryCompetitionTeam Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
+
+
 // exports.deleteCompetition = async function (competitionId) {
 //     try {
 //         const connection = await pool.getConnection(async (conn) => conn);

@@ -48,19 +48,23 @@ module.exports = function (app) {
 
     // 공지 추가, maxCount 값을 조절해서 최대로 업로드 할 pdf, photo 개수 조절
     app.post('/api/competition', upload.fields([
-      { name: 'photo', maxCount: 3 },
-      { name: 'pdf', maxCount: 3 }
+      { name: 'photo', maxCount: 5 },
+      { name: 'pdf', maxCount: 5 }
     ]), competition.registCompetition);
    
-
     // id값을 지정해서 공지 수정
     app.put('/api/competition/:competitionId', upload.fields([
-      { name: 'photo', maxCount: 3 },
-      { name: 'pdf', maxCount: 3 }
+      { name: 'photo', maxCount: 5 },
+      { name: 'pdf', maxCount: 5 }
     ]), competition.updateCompetition);
     
     // id값을 지정해서 공지 삭제
     app.delete('/api/competition/:competitionId', competition.deleteCompetition);
+
+
+    // 대회 참가할 팀 등록
+    // app.post('/api/competition/entry/:competitionId',competition.entryTeam);
+
 };
 
 // app.post('/api/competition', upload.single('photo'), competition.registCompetition);

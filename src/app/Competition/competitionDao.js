@@ -35,7 +35,7 @@ async function createCompetition(connection, createCompetitionParams) {
 }
 
 // id값을 입력해 db 수정
-async function updateCompetition(connection, competitionId, updateCompetitionParams){
+async function updateCompetition(connection, competitionId, updateCompetitionParams) {
   const updateCompetitionQuery = `
         UPDATE Competition 
         SET competition_title = ?, competition_content = ?, event = ?, dead_date = ?, qualification = ?, prize = ?,
@@ -48,7 +48,7 @@ async function updateCompetition(connection, competitionId, updateCompetitionPar
 }
 
 // id값을 입력해 db 삭제
-async function deleteCompetition(connection, competitionId){
+async function deleteCompetition(connection, competitionId) {
   const deleteCompetitionQuery = `
         DELETE FROM Competition
         WHERE id = ?
@@ -58,7 +58,7 @@ async function deleteCompetition(connection, competitionId){
 }
 
 // Id값을 입력해 db에 저장된 사진 경로 반환
-async function getPosterPath(connection, competitionId){
+async function getPosterPath(connection, competitionId) {
   const getPosterPathQuery = `
         SELECT poster_path 
         FROM Competition 
@@ -70,16 +70,81 @@ async function getPosterPath(connection, competitionId){
 }
 
 // Id값을 입력해 db에 저장된 pdf 경로 반환
-async function getPdfPath(connection, competitionId){
+async function getPdfPath(connection, competitionId) {
   const getPdfPathQuery = `
         SELECT pdf_path 
         FROM Competition 
         WHERE id = ?
         `;
   const [competitionRows] = await connection.query(getPdfPathQuery, competitionId);
+  return competitionRows;
+}
+
+
+/*
+async function createCompetition(connection, createCompetitionParams) {
+  // host_id는 로그인 기능 구현 후 추가하기
+  const createCompetitionQuery = `
+         INSERT INTO Competition (competition_title, competition_content, event, dead_date, qualification, 
+         prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+         `;
+  const [competitionRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
+  // console.log('idrow : ',idRows);
   // console.log("Competition Rows:", competitionRows); // 이 줄 추가
   return competitionRows;
 }
+*/
+
+// 대회에 신청하면 Team 테이블에 팀명, 참가하는 대회id & Player 테이블에 선수 이름, 닉네임이 저장됨
+async function entryCompetitionTeam(connection, entryCompetitionQueryParams) {
+  const entryCompetitionTeamQuery = `
+  INSERT INTO Team (team_name, competition_id, created_at, updated_at)
+  VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+`;
+
+  const entryCompetitionPlayerQuery = `
+  INSERT INTO Player (team_id, nickname, name, created_at, updated_at)
+  VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+`;
+
+  try {
+    await connection.query(entryCompetitionTeamQuery, entryCompetitionQueryParams);
+
+    const { insertId: teamId } = await connection.query('SELECT LAST_INSERT_ID()');
+
+    const playerQueryParams = [
+      teamId,
+      'PlayerNickname',
+      'PlayerName',
+    ];
+
+    await connection.query(entryCompetitionPlayerQuery, playerQueryParams);
+
+    return true;
+
+  } catch (error) {
+    throw error;
+  }
+}
+
+// async function entryCompetitionTeam(connection, entryCompetitionQueryParams){
+//   const entryCompetitionTeamQuery = `
+//       INSERT INTO Team (team_name, competition_id, created_at, updated_at)
+//       VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+//       `;
+//   await connection.query(entryCompetitionTeamQuery, entryCompetitionQueryParams);
+
+//   const query = `SELECT LAST_INSERT_ID() INTO @team_id;`
+
+//   await connection.query(query);
+
+//   const entryCompetitionPlayerQuery = `
+//       INSERT INTO Player (team_id, nickname, name, created_at, updated_at)
+//       VALUES (@team_id, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+//       `;
+//   await connection.query(entryCompetitionPlayerQuery, entryCompetitionQueryParams);
+// }
 
 module.exports = {
   getCompetition,
@@ -88,7 +153,8 @@ module.exports = {
   updateCompetition,
   deleteCompetition,
   getPosterPath,
-  getPdfPath
+  getPdfPath,
+  entryCompetitionTeam
 };
 
 
