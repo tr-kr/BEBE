@@ -63,7 +63,7 @@ module.exports = function (app) {
 
 
     // 대회 참가할 팀 등록
-    // app.post('/api/competition/entry/:competitionId',competition.entryTeam);
+    app.post('/api/competition/entry/:competitionId', upload.none(), competition.entryCompetitionTeam);
 
 };
 

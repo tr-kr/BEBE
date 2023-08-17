@@ -29,9 +29,10 @@ exports.index = async function (req, res) {
 }
 
 /*
- * API No. 1
- * API Name : 대회 목록 반환
- * [GET] /api/competitions/:competitionId
+ * API No. 1, 2
+ * API Name : 대회 정보 반환
+ * [GET] /api/competitions/                  전체 대회 정보 반환
+ * [GET] /api/competitions/:competitionId    특정 대회 정보 반환
  */
 exports.getCompetition = async function (req, res) {
     const id = req.params.competitionId;
@@ -48,7 +49,7 @@ exports.getCompetition = async function (req, res) {
 }
 
 /*
- * API No. 2
+ * API No. 3
  * API Name : 대회 등록
  * [POST] /api/competition
  */
@@ -73,7 +74,7 @@ exports.registCompetition = async function (req, res) {
 
 
 /*
- * API No. 3
+ * API No. 4
  * API Name : 대회 수정
  * [PUT] /api/competition/:competitionId
  */
@@ -92,7 +93,7 @@ exports.updateCompetition = async function (req, res) {
 };
 
 /*
- * API No. 4
+ * API No. 5
  * API Name : 대회 삭제
  * [DELETE] /api/competition/:competitionId
  */
@@ -106,27 +107,41 @@ exports.deleteCompetition = async function (req, res) {
 
 
 /*
- * API No. 5
+ * API No. 6
  * API Name : 대회 참가 팀 등록
  * [POST] /api/competition/entry/:competitionId
  */
 exports.entryCompetitionTeam = async function (req,res) {
+    const {team_name, leader_nickname, member1_nickname, member2_nickname, member3_nickname, member4_nickname} = req.body;
     competitionId = req.params.competitionId;
     
-    const teamLeader = {
-        name: req.body.team_leader.name,
-        nickname:req.body.team_leader.nickname
-    }
-    const teamMember = req.body.team_members.map (member => ({
-        name: member.name,
-        nickname: member.nickname
-    }));
+    entryCompetitionParams = [team_name, leader_nickname, member1_nickname, member2_nickname, member3_nickname, member4_nickname];
 
-    const entryCompetitionTeamResponse = await competitionService.entryCompetitionTeam(competitionId);
+    const entryCompetitionTeamResponse = await competitionService.entryCompetitionTeam(competitionId, entryCompetitionParams);
 
     return res.send(entryCompetitionTeamResponse);
 }
 
+/*
+exports.registCompetition = async function (req, res) {
+    try {
+        const { competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date } = req.body;
+        // const poster_path = req.file.path;
+        const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+        const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
+
+        const createCompetitionResponse = await competitionService.createCompetition(
+            competition_title, competition_content, event, dead_date, qualification,
+            prize, pre_date, final_date, poster_path, pdf_path);
+
+        return res.send(createCompetitionResponse);
+    } catch (error) {
+        // 에러 처리
+        console.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
+};
+*/
 
 
 

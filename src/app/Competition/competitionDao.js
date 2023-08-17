@@ -80,46 +80,35 @@ async function getPdfPath(connection, competitionId) {
   return competitionRows;
 }
 
-
-/*
-async function createCompetition(connection, createCompetitionParams) {
-  // host_id는 로그인 기능 구현 후 추가하기
-  const createCompetitionQuery = `
-         INSERT INTO Competition (competition_title, competition_content, event, dead_date, qualification, 
-         prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-         `;
-  const [competitionRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
-  // console.log('idrow : ',idRows);
-  // console.log("Competition Rows:", competitionRows); // 이 줄 추가
-  return competitionRows;
-}
-*/
-
 // 대회에 신청하면 Team 테이블에 팀명, 참가하는 대회id & Player 테이블에 선수 이름, 닉네임이 저장됨
-async function entryCompetitionTeam(connection, entryCompetitionQueryParams) {
+async function entryCompetitionTeam(connection, competitionId, entryCompetitionParams) {
   const entryCompetitionTeamQuery = `
   INSERT INTO Team (team_name, competition_id, created_at, updated_at)
   VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-`;
+  `;
 
   const entryCompetitionPlayerQuery = `
-  INSERT INTO Player (team_id, nickname, name, created_at, updated_at)
+  INSERT INTO Player (team_id, nickname, isLeader, created_at, updated_at)
   VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-`;
-
+  `;
   try {
-    await connection.query(entryCompetitionTeamQuery, entryCompetitionQueryParams);
+    
+    const [team_name, ...nicknames] = entryCompetitionParams;
+    entryCompetitionTeamQueryParams = [team_name, competitionId];
+    await connection.query(entryCompetitionTeamQuery, entryCompetitionTeamQueryParams);
 
-    const { insertId: teamId } = await connection.query('SELECT LAST_INSERT_ID()');
+    const result = await connection.query('SELECT LAST_INSERT_ID()');
+    const teamId = result[0][0]['LAST_INSERT_ID()'];
 
-    const playerQueryParams = [
-      teamId,
-      'PlayerNickname',
-      'PlayerName',
-    ];
-
-    await connection.query(entryCompetitionPlayerQuery, playerQueryParams);
+    for (let i = 0; i < nicknames.length; i++) {
+      let isLeader = i === 0;
+      let entryCompetitionPlayerQueryParams = [
+        teamId,
+        nicknames[i],
+        isLeader,
+      ];
+      await connection.query(entryCompetitionPlayerQuery, entryCompetitionPlayerQueryParams);
+    }
 
     return true;
 
@@ -128,12 +117,12 @@ async function entryCompetitionTeam(connection, entryCompetitionQueryParams) {
   }
 }
 
-// async function entryCompetitionTeam(connection, entryCompetitionQueryParams){
+// async function entryCompetitionTeam(connection, entryCompetitionParams){
 //   const entryCompetitionTeamQuery = `
 //       INSERT INTO Team (team_name, competition_id, created_at, updated_at)
 //       VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 //       `;
-//   await connection.query(entryCompetitionTeamQuery, entryCompetitionQueryParams);
+//   await connection.query(entryCompetitionTeamQuery, entryCompetitionParams);
 
 //   const query = `SELECT LAST_INSERT_ID() INTO @team_id;`
 
@@ -143,7 +132,7 @@ async function entryCompetitionTeam(connection, entryCompetitionQueryParams) {
 //       INSERT INTO Player (team_id, nickname, name, created_at, updated_at)
 //       VALUES (@team_id, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 //       `;
-//   await connection.query(entryCompetitionPlayerQuery, entryCompetitionQueryParams);
+//   await connection.query(entryCompetitionPlayerQuery, entryCompetitionParams);
 // }
 
 module.exports = {

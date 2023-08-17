@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { connect } = require("http2");
 
-const connection = await pool.getConnection(async (err, rows) => (err, rows));
+// const connection = await pool.getConnection(async (err, rows) => (err, rows));
 
 /* Service: Create, Update, Delete 비즈니스 로직 처리
 

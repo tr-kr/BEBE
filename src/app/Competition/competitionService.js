@@ -83,36 +83,16 @@ exports.deleteCompetition = async function (competitionId) {
     }
 };
 
-
-/*
-exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
-    prize, pre_date, final_date, poster_path, pdf_path) {
-    try {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path, pdf_path]
-        const createCompetitionResult = await competitionDao.createCompetition(connection, createCompetitionParams);
-        console.log(`추가된 경기 id : ${createCompetitionResult.insertId}`)
-        connection.release();
-        return response(baseResponse.SUCCESS);
-    } catch (err) {
-        logger.error(`App - createCompetition Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-}
-*/
-
-exports.entryCompetitionTeam = async function (competitionId){
+// 대회 팀 등록
+exports.entryCompetitionTeam = async function (competitionId, entryCompetitionParams){
     try{
         const connection = await pool.getConnection();
-        const entryCompetitionParams = [];
-        await competitionDao.entryCompetitionTeam(connection, entryCompetitionParams);
-
+        
+        await competitionDao.entryCompetitionTeam(connection, competitionId, entryCompetitionParams);
         connection.release();
-        return response(database.SUCCESS);
-
+        return response(baseResponse.SUCCESS);
     } catch(error){
-        logger.error(`App - entryCompetitionTeam Service error\n: ${err.message}`);
+        logger.error(`App - entryCompetitionTeam Service error\n: ${error}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 }
