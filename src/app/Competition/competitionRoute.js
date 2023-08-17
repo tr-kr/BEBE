@@ -40,29 +40,311 @@ module.exports = function (app) {
     
     app.get('/', competition.index);
 
-    // 공지 반환
-    app.get('/api/competition', competition.getCompetition);
 
-    // id값을 지정해서 특정 공지 반환
+/**
+ * @swagger
+ * /api/competition:
+ *   get:
+ *     tags:
+ *       - 대회
+ *     summary: 전체 대회 정보 반환
+ *     parameters:
+ *       - name: competitionId
+ *         in: query
+ *         description: 대회 ID (특정 대회 정보 반환 시 사용)
+ *         required: false
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: 대회 정보 반환 성공
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Competition'
+ * /api/competition/{competitionId}:
+ *   get:
+ *     tags:
+ *       - 대회
+ *     summary: 특정 대회 정보 반환
+ *     parameters:
+ *       - name: competitionId
+ *         in: path
+ *         description: 대회 ID
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: 대회 정보 반환 성공
+ *         schema:
+ *           $ref: '#/definitions/Competition'
+ */
+app.get('/api/competition', competition.getCompetition);
+
+/**
+ * @swagger
+ * definitions:
+ *   Competition:
+ *     properties:
+ *       id:
+ *         type: integer
+ *         description: 대회 ID
+ *       title:
+ *         type: string
+ *         description: 대회 제목
+ *       content:
+ *         type: string
+ *         description: 대회 내용
+ *       event:
+ *         type: string
+ *         description: 대회 이벤트
+ *       dead_date:
+ *         type: string
+ *         format: date
+ *         description: 응모 마감일
+ *       qualification:
+ *         type: string
+ *         description: 응모 자격
+ *       prize:
+ *         type: string
+ *         description: 상금 정보
+ *       pre_date:
+ *         type: string
+ *         format: date
+ *         description: 예선 일자
+ *       final_date:
+ *         type: string
+ *         format: date
+ *         description: 본선 일자
+ *       photo:
+ *         type: array
+ *         items:
+ *           type: string
+ *           format: uri
+ *           description: 포스터 사진 URL
+ */
     app.get('/api/competition/:competitionId', competition.getCompetition);
 
-    // 공지 추가, maxCount 값을 조절해서 최대로 업로드 할 pdf, photo 개수 조절
+
+
+    /**
+ * @swagger
+ * /api/competition:
+ *   post:
+ *     tags:
+ *       - 대회
+ *     summary: 대회 등록
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: competition_title
+ *         type: string
+ *         description: 대회 제목
+ *         required: true
+ *       - in: formData
+ *         name: competition_content
+ *         type: string
+ *         description: 대회 내용
+ *         required: true
+ *       - in: formData
+ *         name: event
+ *         type: string
+ *         description: 대회 이벤트
+ *         required: true
+ *       - in: formData
+ *         name: dead_date
+ *         type: string
+ *         format: date
+ *         description: 응모 마감일
+ *         required: true
+ *       - in: formData
+ *         name: qualification
+ *         type: string
+ *         description: 응모 자격
+ *         required: true
+ *       - in: formData
+ *         name: prize
+ *         type: string
+ *         description: 상금 정보
+ *         required: true
+ *       - in: formData
+ *         name: pre_date
+ *         type: string
+ *         format: date
+ *         description: 예선 일자
+ *         required: true
+ *       - in: formData
+ *         name: final_date
+ *         type: string
+ *         format: date
+ *         description: 본선 일자
+ *         required: true
+ *       - in: formData
+ *         name: photo
+ *         type: file
+ *         description: 포스터 사진 (최대 5개)
+ *       - in: formData
+ *         name: pdf
+ *         type: file
+ *         description: 관련 PDF 파일 (최대 5개)
+ *     responses:
+ *       200:
+ *         description: 대회 등록 성공
+ *       500:
+ *         description: 내부 서버 오류
+ */
     app.post('/api/competition', upload.fields([
       { name: 'photo', maxCount: 5 },
       { name: 'pdf', maxCount: 5 }
     ]), competition.registCompetition);
    
-    // id값을 지정해서 공지 수정
+/**
+ * @swagger
+ * /api/competition/{competitionId}:
+ *   put:
+ *     tags:
+ *       - 대회
+ *     summary: 대회 정보 수정
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - name: competitionId
+ *         in: path
+ *         description: 대회 ID
+ *         required: true
+ *         type: integer
+ *       - in: formData
+ *         name: competition_title
+ *         type: string
+ *         description: 대회 제목
+ *         required: true
+ *       - in: formData
+ *         name: competition_content
+ *         type: string
+ *         description: 대회 내용
+ *         required: true
+ *       - in: formData
+ *         name: event
+ *         type: string
+ *         description: 대회 이벤트
+ *         required: true
+ *       - in: formData
+ *         name: dead_date
+ *         type: string
+ *         format: date
+ *         description: 응모 마감일
+ *         required: true
+ *       - in: formData
+ *         name: qualification
+ *         type: string
+ *         description: 응모 자격
+ *         required: true
+ *       - in: formData
+ *         name: prize
+ *         type: string
+ *         description: 상금 정보
+ *         required: true
+ *       - in: formData
+ *         name: pre_date
+ *         type: string
+ *         format: date
+ *         description: 예선 일자
+ *         required: true
+ *       - in: formData
+ *         name: final_date
+ *         type: string
+ *         format: date
+ *         description: 본선 일자
+ *         required: true
+ *       - in: formData
+ *         name: photo
+ *         type: file
+ *         description: 포스터 사진 (최대 5개)
+ *       - in: formData
+ *         name: pdf
+ *         type: file
+ *         description: 관련 PDF 파일 (최대 5개)
+ *     responses:
+ *       200:
+ *         description: 대회 정보 수정 성공
+ *       500:
+ *         description: 내부 서버 오류
+ */
     app.put('/api/competition/:competitionId', upload.fields([
       { name: 'photo', maxCount: 5 },
       { name: 'pdf', maxCount: 5 }
     ]), competition.updateCompetition);
     
-    // id값을 지정해서 공지 삭제
+/**
+ * @swagger
+ * /api/competition/{competitionId}:
+ *   delete:
+ *     tags:
+ *       - 대회
+ *     summary: 대회 삭제
+ *     parameters:
+ *       - name: competitionId
+ *         in: path
+ *         description: 대회 ID
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: 대회 삭제 성공
+ *       500:
+ *         description: 내부 서버 오류
+ */
     app.delete('/api/competition/:competitionId', competition.deleteCompetition);
 
-
-    // 대회 참가할 팀 등록
+/**
+ * @swagger
+ * /api/competition/entry/{competitionId}:
+ *   post:
+ *     tags:
+ *       - 대회
+ *     summary: 참가 팀 등록
+ *     parameters:
+ *       - name: competitionId
+ *         in: path
+ *         description: 대회 ID
+ *         required: true
+ *         type: integer
+ *       - in: formData
+ *         name: team_name
+ *         type: string
+ *         description: 팀 이름
+ *         required: true
+ *       - in: formData
+ *         name: leader_nickname
+ *         type: string
+ *         description: 팀 리더 닉네임
+ *         required: true
+ *       - in: formData
+ *         name: member1_nickname
+ *         type: string
+ *         description: 팀 멤버 1 닉네임
+ *         required: true
+ *       - in: formData
+ *         name: member2_nickname
+ *         type: string
+ *         description: 팀 멤버 2 닉네임
+ *         required: false
+ *       - in: formData
+ *         name: member3_nickname
+ *         type: string
+ *         description: 팀 멤버 3 닉네임
+ *         required: false
+ *       - in: formData
+ *         name: member4_nickname
+ *         type: string
+ *         description: 팀 멤버 4 닉네임
+ *         required: false
+ *     responses:
+ *       200:
+ *         description: 참가 팀 등록 성공
+ *       500:
+ *         description: 내부 서버 오류
+ */
     app.post('/api/competition/entry/:competitionId', upload.none(), competition.entryCompetitionTeam);
 
 };
