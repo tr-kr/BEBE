@@ -12,6 +12,23 @@ const expressSession = require("express-session");
 const { emit } = require("nodemon");
 const { append } = require("vary");
 
+ 
+//로그인light
+app.post('/login',async(req,res)=>{
+  const {id, password} = req.body;
+  const user = users.find(u=>u.id === id);
+  if(!user) {
+      return res.status(400).json('아이디 없음');
+  } else {
+      const isEqualPw = await bcrypt.compare(password,user.password);
+      console.log(isEqualPw);
+      if(isEqualPw) 
+          return res.status(200).json({msg : "로그인 성공!",user});
+      else 
+          return res.status(404).json({msg : "로그인 실패"});
+  }
+});
+
 /** */
 
 /**비밀번호 보완
@@ -163,7 +180,7 @@ exports.check = async function (req, res) {
   return res.send(response(baseResponse.TOKEN_VERIFICATION_SUCCESS));
 };*/
 
-//로그인, 로그아웃
+//로그인light
 app.use(cookieParser());
 
 app.use(
@@ -233,3 +250,74 @@ const appServer = http.createServer(app);
 appServer.listen(app.get("port"), () => {
   console.log(`${app.get("port")}에서 서버실행중`);
 });
+
+//로그인 light
+exports.login = async function (req, res) {
+  const { email, pw } = req.body;
+  const sql = `SELECT * FROM User WHERE email="${email}"`;
+  connection.query(sql, function (err, rows, fields) {
+    if (err) {
+      console.log(err);
+      return res.status(statusCode.NOT_FOUND).send(messageCode.REQUEST_FAIL);
+    } else {
+      if (rows.length === 0) {
+        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_USER);
+      } else if (pw !== rows[0].pw) {
+        return res.status(statusCode.MATCH_ERR).send(messageCode.INVALID_PW);
+      } else {
+        var token = jwt.sign(
+          {
+            email: email,
+          },
+          process.env.JWT_SECRET
+        );
+
+        return res.status(statusCode.SUCCESS).json({
+          code: statusCode.SUCCESS,
+          message: messageCode.SIGN_IN_SUCCESS,
+          userIdx: rows[0].id,
+          token: token,
+        });
+      }
+    }
+  });
+};
+
+//로그인 light
+exports.login = async function (req, res, next) {
+  var id = req.body.id;
+  var pw = req.body.pw;
+
+  var query = "select salt, password from where userid='" + id + "';";
+  console.log(query);
+  connection.query(query, function (err, rows) {
+    if (err) throw err;
+    else {
+      if (rows.length == 0) {
+        //아이디 존재하지 않는 경우
+        console.log("아이디가 틀렸습니다");
+        res.redirect("/login");
+      } else {
+        var salt = rows[0].salt;
+        var password = rows[0].password;
+        const hashPassword = crypto
+          .createHash("sha512")
+          .update(pw + salt)
+          .diget("hex");
+        if (password == hashPassword) {
+          //로그인 성공
+          console.log("로그인 성공");
+          res.cookie("user", id, {
+            expires: new Date(Date.now() + 900000),
+            httpOnly: true,
+          });
+          res.redirect("/");
+        } else {
+          //로그인실패
+          console.log("비밀번호 틀렸습니다");
+          res.redirect("/login");
+        }
+      }
+    }
+  });
+};

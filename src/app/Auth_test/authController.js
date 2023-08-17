@@ -407,12 +407,3 @@ exports.authDiscord = async function(req, res){
     }
 
 }
-
-
-
-
-
-
-
-
-

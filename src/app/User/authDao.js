@@ -1,4 +1,4 @@
-/* 모든 유저 조회
+//모든 유저 조회
 async function selectUser(connection) {
   const selectUserListQuery = `
                 SELECT pw, userName 
@@ -99,9 +99,9 @@ async function updateUserInfo(connection, id, nickname) {
   WHERE idx = ?;`;
   const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
   return updateUserRow[0];
-}*/
+}
 
-/*module.exports = {
+module.exports = {
   selectUser,
   selectUserEmail,
   selectUserId,
@@ -111,4 +111,19 @@ async function updateUserInfo(connection, id, nickname) {
   updateUserInfo,
   selectProduct,
   selectProductId,
-};*/
+  getUserData,
+};
+
+async function getUserData(connection, id) {
+  const query = `
+    SELECT salt, password
+    FROM UserTB
+    WHERE userid = ?;`;
+
+  try {
+    const rows = await connection.query(query, [id]);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+}
