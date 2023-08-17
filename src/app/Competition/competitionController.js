@@ -1,21 +1,21 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const baseResponse = require("../../../config/baseResponseStatus");
-const {response, errResponse} = require("../../../config/response");
+const { response, errResponse } = require("../../../config/response");
 const regexEmail = require("regex-email");
-const {emit} = require("nodemon");
+const { emit } = require("nodemon");
 const competitionProvider = require("./competitionProvider");
 const competitionService = require("./competitionService");
 
 const views = require("../../../views/template");
 const path = require('path');
 
-exports.uploadImage = async function (req,res){
+exports.uploadImage = async function (req, res) {
     if (!req.file) {
         return res.status(400).json({ message: 'No image file provided.' });
-      }
-      // 업로드된 파일의 경로를 반환 (예: '/uploads/1627394887305.jpg')
-      const uploadedFilePath = req.file.path;
-      res.status(200).json({ imageUrl: uploadedFilePath });
+    }
+    // 업로드된 파일의 경로를 반환 (예: '/uploads/1627394887305.jpg')
+    const uploadedFilePath = req.file.path;
+    res.status(200).json({ imageUrl: uploadedFilePath });
 }
 
 /*
@@ -23,7 +23,7 @@ exports.uploadImage = async function (req,res){
  * API Name : 메인화면 반환
  * [GET] /
  */
-exports.index = async function (req,res){
+exports.index = async function (req, res) {
     const html = views.HTML();
     res.send(html);
 }
@@ -33,7 +33,7 @@ exports.index = async function (req,res){
  * API Name : 대회 목록 반환
  * [GET] /api/competitions/:competitionId
  */
-exports.getCompetition = async function (req,res){
+exports.getCompetition = async function (req, res) {
     const id = req.params.competitionId;
 
     if (!id) {
@@ -60,7 +60,7 @@ exports.registCompetition = async function (req, res) {
         const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
 
         const createCompetitionResponse = await competitionService.createCompetition(
-            competition_title, competition_content, event, dead_date, qualification, 
+            competition_title, competition_content, event, dead_date, qualification,
             prize, pre_date, final_date, poster_path, pdf_path);
 
         return res.send(createCompetitionResponse);
@@ -94,7 +94,7 @@ exports.updateCompetition = async function (req, res) {
 /*
  * API No. 4
  * API Name : 대회 삭제
- * [DELETE] /api/competition/:compId
+ * [DELETE] /api/competition/:competitionId
  */
 exports.deleteCompetition = async function (req, res) {
     competitionId = req.params.competitionId;
@@ -103,6 +103,30 @@ exports.deleteCompetition = async function (req, res) {
 
     return res.send(deleteCompetitionResponse);
 };
+
+
+/*
+ * API No. 5
+ * API Name : 대회 참가 팀 등록
+ * [POST] /api/competition/entry/:competitionId
+ */
+exports.entryCompetitionTeam = async function (req,res) {
+    competitionId = req.params.competitionId;
+    
+    const teamLeader = {
+        name: req.body.team_leader.name,
+        nickname:req.body.team_leader.nickname
+    }
+    const teamMember = req.body.team_members.map (member => ({
+        name: member.name,
+        nickname: member.nickname
+    }));
+
+    const entryCompetitionTeamResponse = await competitionService.entryCompetitionTeam(competitionId);
+
+    return res.send(entryCompetitionTeamResponse);
+}
+
 
 
 
