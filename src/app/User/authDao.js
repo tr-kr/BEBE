@@ -1,4 +1,52 @@
-//모든 유저 조회
+//로그인 light
+// 패스워드 체크
+async function getPwd(connection, account, password) {
+  const getPwdQuery = `SELECT account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
+                            FROM User 
+                            WHERE account = ?
+                            `;
+
+  const [selectUserPasswordRow] = await connection.query(getPwdQuery, account);
+  return selectUserPasswordRow;
+}
+
+// class AuthDao {
+//   async getPwd(postLoginReq) {
+//     const getPwdParams = [postLoginReq.getEmail()];
+
+//     try {
+//       const result = await pool.query(getPwdQuery, getPwdParams);
+//       const userRow = result.rows[0];
+//       if (!userRow) {
+//         throw new Error("User not found");
+//       }
+
+//       return {
+//         useridx: userRow.useridx,
+//         name: userRow.name,
+//         nickName: userRow.nickname,
+//         phone: userRow.phone,
+//         email: userRow.email,
+//         pwd: userRow.pwd,
+//       };
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
+// }
+
+//로그인light
+async function selectUserId(connection, userId) {
+  const selectUserIdQuery = `
+                 SELECT account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose 
+                 FROM User 
+                 WHERE id = ?;
+                 `;
+  const [userRow] = await connection.query(selectUserIdQuery, userId);
+  return userRow;
+}
+
+//////////////////////////////////////////////모든 유저 조회
 async function selectUser(connection) {
   const selectUserListQuery = `
                 SELECT pw, userName 
@@ -17,17 +65,6 @@ async function selectUserEmail(connection, email) {
                 `;
   const [emailRows] = await connection.query(selectUserEmailQuery, email);
   return emailRows;
-}
-
-// userId 회원 조회
-async function selectUserId(connection, userId) {
-  const selectUserIdQuery = `
-                 SELECT idx, pw, userName 
-                 FROM UserTB 
-                 WHERE idx = ?;
-                 `;
-  const [userRow] = await connection.query(selectUserIdQuery, userId);
-  return userRow;
 }
 
 // product 전체 조회
@@ -111,19 +148,6 @@ module.exports = {
   updateUserInfo,
   selectProduct,
   selectProductId,
-  getUserData,
+  //getUserData,
+  getPwd,
 };
-
-async function getUserData(connection, id) {
-  const query = `
-    SELECT salt, password
-    FROM UserTB
-    WHERE userid = ?;`;
-
-  try {
-    const rows = await connection.query(query, [id]);
-    return rows;
-  } catch (err) {
-    throw err;
-  }
-}

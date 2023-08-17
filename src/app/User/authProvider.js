@@ -3,6 +3,14 @@ const { logger } = require("../../../config/winston");
 
 const authDao = require("./authDao");
 
+exports.getPwd = async function (account, password) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const pwdCheckResult = await authDao.getPwd(connection, account, password);
+  connection.release();
+
+  return pwdCheckResult;
+};
+
 /* Provider: Read 비즈니스 로직 처리
 
 exports.retrieveUserList = async function (email) {

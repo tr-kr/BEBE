@@ -26,7 +26,7 @@ module.exports = function (app) {
   // app.patch("/app/users/:userId", jwtMiddleware, auth.patchUsers);*/
 
   //로그인,로그아웃,회원가입
-  app.get("/api/example", auth.login);
+  //app.get("/api/example", auth.login);
   app.post("/api/login", auth.login);
   //app.get("/api/logout", auth.logout);
 };
