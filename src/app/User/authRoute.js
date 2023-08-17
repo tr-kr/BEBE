@@ -28,5 +28,5 @@ module.exports = function (app) {
   //로그인,로그아웃,회원가입
   app.get("/api/example", auth.login);
   app.post("/api/login", auth.login);
-  app.get("/api/logout", auth.logout);
+  //app.get("/api/logout", auth.logout);
 };

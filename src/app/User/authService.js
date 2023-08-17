@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { connect } = require("http2");
 
+const connection = await pool.getConnection(async (err, rows) => (err, rows));
+
 /* Service: Create, Update, Delete 비즈니스 로직 처리
 
 exports.createUser = async function (email, password, nickname) {
@@ -125,7 +127,7 @@ exports.editUser = async function (id, nickname) {
   }
 };*/
 
-//로그인 서비스
+/*로그인 light
 exports.login = async function (req) {
   const json = {
     code: 0,
@@ -162,4 +164,4 @@ exports.login = async function (req) {
     json.data = {};
     return json;
   }
-};
+};*/

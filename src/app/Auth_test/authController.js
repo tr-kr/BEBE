@@ -8,6 +8,14 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 
 const axios = require('axios');
+//made by ryu
+//////////////////////////////////////////////////////////////////
+const nodemailer = require('nodemailer');
+const secret = require('../../../config/secret');
+const secretKey = secret.jwtsecret;
+const jwt = require('jsonwebtoken');
+
+
 /**
  * API No. 0
  * API Name : 테스트 API
@@ -22,6 +30,9 @@ const axios = require('axios');
  * API Name : 유저 생성 (회원가입) API
  * [POST] /app/users
  */
+
+
+
 exports.postUsers = async function (req, res) {
 
     /**
@@ -69,26 +80,97 @@ exports.register = async function (req, res) {
     );
     return res.send(signUpResponse);
 };
-exports.verifyEmail = async function (req, res) {
+
+const transporter = nodemailer.createTransport({
+    service: 'Naver', // 이메일 서비스
+    host: 'smtp.naver.com',
+    port: 587,
+    secure : false,
+    auth: {
+      user: 'won000111@naver.com', // 보내는 이메일 주소
+      pass: '@@won0102' // 비밀번호 또는 액세스 토큰
+    }
+  });
+
+exports.send_verification_email = async function(req, res){
+
+
+    const { email } = req.body;
+    console.log(email);
+    //const email = `ryu_eclipse@naver.com`;
+    // 토큰 생성
+    const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
+  
+    // 이메일 내용 템플릿 생성
+    const emailContent = `
+      <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
+      http://localhost:3000/api/verification/verify?token=${token}
+    `;
+  
+    const mailOptions = {
+      from: 'won000111@naver.com',
+      to: email,
+      subject: '본인 확인 이메일',
+      html: emailContent
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('이메일 전송 오류:', error);
+        res.status(500).json({ message: '이메일 전송 오류' });
+      } else {
+        console.log('이메일 전송 성공:', info.response);
+        res.status(200).json({ message: '이메일 전송 완료' });
+      }
+    })
+};
+async function verifyEmail(req, res) {
 
     /**
      * Body: email, password, nickname
      */
-    const {email} = req.body;
+    //console.log(req);
+    const {email} = req;
 
-    const verifyResponse = await userService.verifyEmail(
-        email
-    );
-
-    return res.send(verifyResponse);
+    //console.log('컨트롤러,', email);
+    const verifyResponse = await userService.verifyEmail(email);
+    //console.log(verifyResponse);
+    return verifyResponse;
 };
+
+exports.verify = async function(req, res){
+    const { token } = req.query;
+    
+    try {
+      const decoded = jwt.verify(token, secretKey);
+      console.log(decoded.email);
+      
+      verifyEmail({email : decoded.email})
+      .then(result =>{
+        //console.log('qqq' + result);
+      })
+      .catch(err =>{
+        //console.log('zz' + err);
+      })
+
+      //console.log(verifyREsult);
+      // 토큰 유효한 경우
+      // 본인 확인 완료 처리 후 클라이언트에게 키 전송 등의 작업 수행
+      res.status(200).json({ message: '본인 확인이 완료되었습니다.' });
+    } catch (error) {
+      // 토큰 무효한 경우
+      res.status(400).json({ message: '유효하지 않은 토큰' });
+    }
+};
+
+
 
 
 
 exports.accountCheckTest = async function (req, res){
     const {account} = req.body;
     if(account.length == 0) 
-        return res.send(baseResponse.USER_USERID_EMPTY);
+        return res.send(baseResponse.SIGNUP_ACCOUNT_EMPTY);
 
 
     const accountCheckResponse = await userProvider.accountCheckTest(
@@ -102,7 +184,7 @@ exports.accountCheckTest = async function (req, res){
 exports.emailCheckTest = async function (req, res){
     const {email} = req.body;
     if(email.length == 0) 
-        return res.send(baseResponse.SIGNIN_EMAIL_EMPTY);
+        return res.send(baseResponse.SIGNUP_EMAIL_EMPTY);
 
 
     const emailCheckResponse = await userProvider.emailCheck(
@@ -110,6 +192,20 @@ exports.emailCheckTest = async function (req, res){
     );
     if (emailCheckResponse.length > 0)
         return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL));
+
+    return res.send(baseResponse.SUCCESS);
+};
+exports.nicknameCheckTest = async function (req, res){
+    const {nickname} = req.body;
+    if(nickname.length == 0) 
+        return res.send(baseResponse.SIGNUP_NICKNAME_EMPTY);
+
+
+    const nicknameCheckResponse = await userProvider.nicknameCheck(
+        nickname
+    );
+    if (nicknameCheckResponse.length > 0)
+        return res.send(errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME));
 
     return res.send(baseResponse.SUCCESS);
 };
@@ -311,12 +407,3 @@ exports.authDiscord = async function(req, res){
     }
 
 }
-
-
-
-
-
-
-
-
-

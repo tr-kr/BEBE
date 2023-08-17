@@ -29,6 +29,16 @@ async function selectUserAccountTest(connection, account) {
   const [accountRows] = await connection.query(selectUserAccountQuery, account);
   return accountRows;
 }
+// nickname으로 회원 조회
+async function selectUserNickname(connection, nickname) {
+  const selectUserNicknameQuery = `
+                SELECT account, nickname 
+                FROM User
+                WHERE nickname = ?;
+                `;
+  const [nicknameRows] = await connection.query(selectUserNicknameQuery, nickname);
+  return nicknameRows;
+}
 
 // userId 회원 조회
 async function selectUserId(connection, userId) {
@@ -54,15 +64,22 @@ async function insertUser(connection, insertUserInfoParams) {
 
   return insertUserInfoRow;
 }
+
 // 이메일인증
 async function verifyEmail(connection, email) {
   const selectUserEmailQuery = `
                 UPDATE User 
-                SET verifiedEmail = true
+                SET emailVerified = true,
+                updated_at = CURRENT_TIMESTAMP
                 WHERE email = ?;
                 `;
+            
+  await connection.query(`SET SQL_SAFE_UPDATES=0;`);
+  //console.log('zz',email);
   const [emailRows] = await connection.query(selectUserEmailQuery, email);
-  return emailRows;
+  //console.log(emailRows);
+  await connection.query(`SET SQL_SAFE_UPDATES=1;`);
+  return emailRows[0];
 }
 
 
@@ -110,6 +127,7 @@ module.exports = {
   selectUser,
   selectUserAccountTest,
   selectUserEmail,
+  selectUserNickname,
   verifyEmail,
   selectUserId,
   insertUser,
