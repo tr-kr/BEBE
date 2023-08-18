@@ -22,6 +22,15 @@ exports.retrieveCompetitionList = async function (id) {
   }
 };
 
+exports.retrieveCompetitionEntryTeamList = async function (competitionId) {
+  const connection = await pool.getConnection(async (conn) => conn);
+  console.log(competitionId);
+  const competitionEntryTeamListResult = await competitionDao.getCompetitionEntryTeam(connection, competitionId);
+  connection.release();
+
+  return competitionEntryTeamListResult;
+};
+
 
 
 /*

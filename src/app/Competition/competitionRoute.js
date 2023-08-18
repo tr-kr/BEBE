@@ -347,6 +347,67 @@ app.get('/api/competition', competition.getCompetition);
  */
     app.post('/api/competition/entry/:competitionId', upload.none(), competition.entryCompetitionTeam);
 
+/**
+ * @swagger
+ * /api/competition/entry/{competitionId}:
+ *   get:
+ *     tags:
+ *       - 대회
+ *     summary: 대회 참가 팀 반환
+ *     description: 주어진 대회 ID에 해당하는 참가 팀을 반환합니다.
+ *     parameters:
+ *       - name: competitionId
+ *         in: path
+ *         description: 대회 ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: 성공적으로 대회 참가 팀 반환
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CompetitionEntryResponse'
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CompetitionEntryResponse:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: object
+ *           properties:
+ *             code:
+ *               type: string
+ *               example: SUCCESS
+ *             message:
+ *               type: string
+ *               example: 대회 참가 팀을 성공적으로 가져왔습니다.
+ *         data:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/CompetitionEntryTeam'
+ *
+ *     CompetitionEntryTeam:
+ *       type: object
+ *       properties:
+ *         // Define properties for the competition entry team here
+ *         teamName:
+ *           type: string
+ *           example: Team A
+ *         members:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["Member 1", "Member 2"]
+ */
+app.get('/api/competition/entry/:competitionId', competition.getCompetitionEntryTeam);
+
+
 };
 
 // app.post('/api/competition', upload.single('photo'), competition.registCompetition);

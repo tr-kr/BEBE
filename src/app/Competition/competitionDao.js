@@ -117,6 +117,20 @@ async function entryCompetitionTeam(connection, competitionId, entryCompetitionP
   }
 }
 
+// id로 특정 대회 조회
+async function getCompetitionEntryTeam(connection, id) {
+  const getCompetitionEntryTeamQuery = `
+         SELECT team_name 
+         FROM Team
+         WHERE competition_id = ?;
+         `;
+  let num = [id];
+  const [competitionEntryTeamRows] = await connection.query(getCompetitionEntryTeamQuery, num);
+  return competitionEntryTeamRows;
+}
+
+
+
 // async function entryCompetitionTeam(connection, entryCompetitionParams){
 //   const entryCompetitionTeamQuery = `
 //       INSERT INTO Team (team_name, competition_id, created_at, updated_at)

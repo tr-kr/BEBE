@@ -122,6 +122,19 @@ exports.entryCompetitionTeam = async function (req,res) {
     return res.send(entryCompetitionTeamResponse);
 }
 
+
+/*
+ * API No. 7
+ * API Name : 대회 참가 팀 반환
+ * [GET] /api/competition/entry/:competitionId
+ */
+exports.getCompetitionEntryTeam = async function (req,res) {
+    competitionId = req.params.competitionId;
+    
+    const competitionResultList = await competitionProvider.retrieveCompetitionEntryTeamList(competitionId);
+    return res.send(response(baseResponse.SUCCESS, competitionResultList));
+}
+
 /*
 exports.registCompetition = async function (req, res) {
     try {
