@@ -1,18 +1,20 @@
 const { logger } = require("../../../config/winston");
 const { pool } = require("../../../config/database");
-const secret_config = require("../../../config/secret");
+const secret = require("../../../config/secret");
 const authProvider = require("./authProvider");
 const authDao = require("./authDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const { response } = require("../../../config/response");
 const { errResponse } = require("../../../config/response");
+const jwtMiddleware = require("../../../config/jwtMiddleware");
+const secretKey = secret.jwtsecret;
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { connect } = require("http2");
 
 //로그인 light
-const SHA256 = require("sha256"); // SHA256 해시 함수 라이브러리 사용
+const SHA512 = require("sha512"); // SHA256 해시 함수 라이브러리 사용
 //const jwtService = require("./jwtService"); // jwtService 모듈의 경로에 따라 수정
 
 exports.login = async function (account, password) {
@@ -26,7 +28,10 @@ exports.login = async function (account, password) {
     let encryptPwd;
 
     try {
-      encryptPwd = SHA256(password);
+      encryptPwd = await crypto
+        .createHash("sha512")
+        .update(password)
+        .digest("hex");
       console.log(`암호화 된 비밀번호: ${encryptPwd}`);
     } catch (e) {
       throw new Error("PASSWORD_ENCRYPTION_ERROR");
@@ -34,13 +39,15 @@ exports.login = async function (account, password) {
 
     if (user.password === encryptPwd) {
       const useridx = user.id;
-      const jwt = jwtService.createJwt(useridx);
+      const token = jwt.sign({ useridx }, secretKey, { expiresIn: "1h" });
+
       return {
         useridx: useridx,
-        jwt: jwt,
+        jwt: token,
       };
     } else {
-      throw new Error("FAILED_TO_LOGIN");
+      //throw new Error("FAILED_TO_LOGIN");
+      return response(baseResponse.SIGNIN_PASSWORD_WRONG);
     }
   } catch (error) {
     // 로깅 및 예외 처리

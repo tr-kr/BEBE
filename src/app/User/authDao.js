@@ -1,7 +1,7 @@
 //로그인 light
 // 패스워드 체크
 async function getPwd(connection, account, password) {
-  const getPwdQuery = `SELECT account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
+  const getPwdQuery = `SELECT id, account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
                             FROM User 
                             WHERE account = ?
                             `;

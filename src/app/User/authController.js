@@ -13,7 +13,8 @@ const { emit } = require("nodemon");
 const { append } = require("vary");
 
 //로그인 light
-const logger = require("winston"); // 또는 다른 로깅 라이브러리 사용
+//const logger = require("winston"); // 또는 다른 로깅 라이브러리 사용
+const { logger } = require("../../../config/winston");
 
 exports.login = async function (req, res) {
   try {
@@ -22,7 +23,7 @@ exports.login = async function (req, res) {
       return res.send(response(baseResponse.SIGNIN_EMAIL_EMPTY));
     }
     if (!password) {
-      return res.send(response(baseResponse.SIGNIN_PASSWORD_WRONG));
+      return res.send(response(baseResponse.SIGNIN_PASSWORD_EMPTY));
     }
 
     // if (!isRegexEmail(postLoginReq.email)) {
@@ -34,10 +35,7 @@ exports.login = async function (req, res) {
     // }
 
     const postLoginRes = await authService.login(account, password);
-    return res.json({
-      isSuccess: true,
-      data: postLoginRes,
-    });
+    return res.json(postLoginRes);
   } catch (exception) {
     logger.error(`App - login error\n: ${exception.message}`);
     return res.send(exception);
