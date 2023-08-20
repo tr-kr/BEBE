@@ -347,6 +347,8 @@ app.get('/api/competition', competition.getCompetition);
  */
     app.post('/api/competition/entry/:competitionId', upload.none(), competition.entryCompetitionTeam);
 
+
+
 /**
  * @swagger
  * /api/competition/entry/{competitionId}:
@@ -405,8 +407,7 @@ app.get('/api/competition', competition.getCompetition);
  *             type: string
  *           example: ["Member 1", "Member 2"]
  */
-app.get('/api/competition/entry/:competitionId', competition.getCompetitionEntryTeam);
-
+    app.get('/api/competition/entry/:competitionId', competition.getCompetitionEntryTeam);
 
 };
 
