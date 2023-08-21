@@ -4,8 +4,8 @@ async function getCompetition(connection) {
          SELECT * 
          FROM Competition;
          `;
-  const [competitionRows] = await connection.query(getCompetitionListQuery);
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(getCompetitionListQuery);
+  return competitionEntryTeamRows;
 }
 
 // id로 특정 대회 조회
@@ -16,8 +16,8 @@ async function getCompetitionById(connection, id) {
          WHERE id = ?;
          `;
   let num = parseInt(id);
-  const [competitionRows] = await connection.query(getCompetitionIdQuery, num);
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(getCompetitionIdQuery, num);
+  return competitionEntryTeamRows;
 }
 
 // 대회 등록
@@ -28,10 +28,10 @@ async function createCompetition(connection, createCompetitionParams) {
          prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
          `;
-  const [competitionRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
+  const [competitionEntryTeamRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
   // console.log('idrow : ',idRows);
-  // console.log("Competition Rows:", competitionRows); // 이 줄 추가
-  return competitionRows;
+  // console.log("Competition Rows:", competitionEntryTeamRows); // 이 줄 추가
+  return competitionEntryTeamRows;
 }
 
 // id값을 입력해 db 수정
@@ -43,8 +43,8 @@ async function updateCompetition(connection, competitionId, updateCompetitionPar
         WHERE id = ?;
         `;
   updateCompetitionParams.push(competitionId)
-  const [competitionRows] = await connection.query(updateCompetitionQuery, updateCompetitionParams);
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(updateCompetitionQuery, updateCompetitionParams);
+  return competitionEntryTeamRows;
 }
 
 // id값을 입력해 db 삭제
@@ -53,8 +53,8 @@ async function deleteCompetition(connection, competitionId) {
         DELETE FROM Competition
         WHERE id = ?
         `;
-  const [competitionRows] = await connection.query(deleteCompetitionQuery, competitionId);
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(deleteCompetitionQuery, competitionId);
+  return competitionEntryTeamRows;
 }
 
 // Id값을 입력해 db에 저장된 사진 경로 반환
@@ -64,9 +64,9 @@ async function getPosterPath(connection, competitionId) {
         FROM Competition 
         WHERE id = ?
         `;
-  const [competitionRows] = await connection.query(getPosterPathQuery, competitionId);
-  // console.log("Competition Rows:", competitionRows); // 이 줄 추가
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(getPosterPathQuery, competitionId);
+  // console.log("Competition Rows:", competitionEntryTeamRows); // 이 줄 추가
+  return competitionEntryTeamRows;
 }
 
 // Id값을 입력해 db에 저장된 pdf 경로 반환
@@ -76,8 +76,8 @@ async function getPdfPath(connection, competitionId) {
         FROM Competition 
         WHERE id = ?
         `;
-  const [competitionRows] = await connection.query(getPdfPathQuery, competitionId);
-  return competitionRows;
+  const [competitionEntryTeamRows] = await connection.query(getPdfPathQuery, competitionId);
+  return competitionEntryTeamRows;
 }
 
 // 대회에 신청하면 Team 테이블에 팀명, 참가하는 대회id & Player 테이블에 선수 이름, 닉네임이 저장됨
@@ -130,7 +130,6 @@ async function getCompetitionEntryTeam(connection, id) {
 }
 
 
-
 // async function entryCompetitionTeam(connection, entryCompetitionParams){
 //   const entryCompetitionTeamQuery = `
 //       INSERT INTO Team (team_name, competition_id, created_at, updated_at)
@@ -157,7 +156,8 @@ module.exports = {
   deleteCompetition,
   getPosterPath,
   getPdfPath,
-  entryCompetitionTeam
+  entryCompetitionTeam,
+  getCompetitionEntryTeam
 };
 
 

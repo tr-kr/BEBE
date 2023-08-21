@@ -20,5 +20,3 @@ const options = {
 const specs = swaggerJsdoc(options);
 
 module.exports = { swaggerUi, specs };
-
-console.log(JSON.stringify(specs, null, 2));

@@ -122,7 +122,6 @@ exports.entryCompetitionTeam = async function (req,res) {
     return res.send(entryCompetitionTeamResponse);
 }
 
-
 /*
  * API No. 7
  * API Name : 대회 참가 팀 반환
@@ -135,25 +134,21 @@ exports.getCompetitionEntryTeam = async function (req,res) {
     return res.send(response(baseResponse.SUCCESS, competitionResultList));
 }
 
+
 /*
-exports.registCompetition = async function (req, res) {
-    try {
-        const { competition_title, competition_content, event, dead_date, qualification, prize, pre_date, final_date } = req.body;
-        // const poster_path = req.file.path;
-        const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
-        const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
+exports.getCompetition = async function (req, res) {
+    const id = req.params.competitionId;
 
-        const createCompetitionResponse = await competitionService.createCompetition(
-            competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path, pdf_path);
-
-        return res.send(createCompetitionResponse);
-    } catch (error) {
-        // 에러 처리
-        console.error(error);
-        return res.status(500).send("Internal Server Error");
+    if (!id) {
+        // 대회 목록 전체 조회
+        const competitionResultList = await competitionProvider.retrieveCompetitionList();
+        return res.send(response(baseResponse.SUCCESS, competitionResultList));
+    } else {
+        // 특정 대회 조회
+        const competitionResultListById = await competitionProvider.retrieveCompetitionList(id);
+        return res.send(response(baseResponse.SUCCESS, competitionResultListById));
     }
-};
+}
 */
 
 
