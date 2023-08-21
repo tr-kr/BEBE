@@ -78,14 +78,16 @@ exports.getUsers = async function (req, res) {
 /**
  * API No. 3
  * API Name : 특정 유저 조회 API
- * [GET] /app/users/{userId}
+ * [GET] /app/users?token=토큰}
  */
 exports.getUserById = async function (req, res) {
 
     /**
      * Path Variable: userId
      */
-    const userId = req.params.userId;
+    //const {token} = req.query;
+    console.log(req.verifiedToken);
+    const userId = req.verifiedToken.useridx;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);

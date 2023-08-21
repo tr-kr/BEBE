@@ -37,7 +37,28 @@ module.exports = function(app){
 
     //류지원
     // 3. 특정 유저 조회 API
-    app.get('/api/user/:userId', user.getUserById);
+    
+    /**
+    @swagger
+    /api/competition:
+    get:
+    tags:
+    대회
+    summary: 전체 대회 정보 반환
+    parameters:
+    name: competitionId
+    in: query
+    description: 대회 ID (특정 대회 정보 반환 시 사용)
+    required: false
+    type: integer
+    responses:
+    200:
+    description: 대회 정보 반환 성공
+    schema:
+    type: array
+    items:
+    */
+    app.get('/api/user/myInfo', jwtMiddleware, user.getUserById);
     // 특정유저 수정 API
     app.put('/api/user/:userId', user.updateUser);
 

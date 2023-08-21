@@ -56,6 +56,35 @@ exports.verifyEmail = async function (email) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+exports.verifySchool = async function (id, email) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const userIdResult = await userDao.verifySchool(connection, id, email);
+        connection.release();
+        //console.log(`서비스:`, email);
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - createUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+exports.verifyDiscord = async function (id, discord) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const userIdResult = await userDao.verifyDiscord(connection, id, discord);
+        connection.release();
+        //console.log(`서비스:`, email);
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - createUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
 
 
 

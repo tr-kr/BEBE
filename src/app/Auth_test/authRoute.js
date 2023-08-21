@@ -20,8 +20,6 @@ module.exports = function(app){
     app.post('/api/signup/nicknameCheck', user.nicknameCheckTest);
     app.post('/api/signup/emailCheck', user.emailCheckTest);
     app.post('/api/signup', user.register);
-    //app.post('/api/users/verify-email', user.verifyEmail);
-
     
     // 2. 유저 조회 API (+ 검색)
     app.get('/app/users',user.getUsers); 
@@ -38,65 +36,15 @@ module.exports = function(app){
 //작성자 : 류지원
 //디스코드, 라이엇 인증 API
 
-//      app.get('/api/auth/discord', user.tryAuthDiscord);
+app.get('/api/auth/discord', user.tryDiscord)
+app.get('/api/auth/discord/callback', user.callbackDiscord);
 
-//     //계정인증시 콜백
-//     app.get('/api/auth/discord/success', user.authDiscord);
+//작성자 : 류지원
+//디스코드, 라이엇 인증 API
 
-// const axios = require('axios');
-// const CLIENT_ID = '1138439231073693736';
-// const CLIENT_SECRET = '4f34a94c10adfd93b336fd0265fc8157ea9421b6a35c911e2559fa0f6c9c15d1';
-// const REDIRECT_URI = 'http://localhost:3000/api/auth/discord/success';
+app.post('/api/verification/send-verification-school-email', user.send_verification_school_email);
+app.get('/api/verification/verify_school', user.verify_school);
 
-
-// app.get('/api/auth/discord', (req, res) => {
-//   res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
-// });
-
-// app.get('/api/auth/discord/success', async (req, res) => {
-//   const code = req.query.code;
-
-//   try {
-//     console.log(1);
-
-//     const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', {
-//       method: 'POST',
-//       body: new URLSearchParams({
-//         client_id: CLIENT_ID,
-//         client_secret: CLIENT_SECRET,
-//         code : code,
-//         grant_type: 'authorization_code',
-//         redirect_uri: REDIRECT_URI,
-//         scope: 'identify',
-//       }).toString(),
-//       headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//       },
-//     });
-//       console.log(tokenResponse);
-
-
-//       console.log(6);
-//       //const accessToken = tokenResponse.data.access_token;
-//       const accessToken = tokenResponse.data.access_token;
-//       console.log(2);
-
-
-//      const userResponse = await axios.get('https://discord.com/api/users/@me', {
-//        headers: {
-//          Authorization: `Bearer ${accessToken}`,
-//        },
-//      });
-
-//      const user = userResponse.data;
-//      // 여기서 user 정보를 활용하여 사용자 인증 및 처리 로직을 진행합니다.
-
-//      res.send(`Hello, ${user.username}#${user.discriminator}!`);
-//   } catch (error) {
-//     console.error('Error:', error.message);
-//     res.send('An error occurred.');
-//   }
-// });
 
 
 // // Riot Games API Key

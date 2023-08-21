@@ -82,6 +82,41 @@ async function verifyEmail(connection, email) {
   return emailRows[0];
 }
 
+// 학교이메일인증
+async function verifySchool(connection, id, email) {
+  const selectUserEmailQuery = `
+                UPDATE User 
+                SET school_auth = ?,
+                updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?;
+                `;
+            
+ // await connection.query(`SET SQL_SAFE_UPDATES=0;`);
+  //console.log('zz',email);
+  const [emailRows] = await connection.query(selectUserEmailQuery, email, id);
+  //console.log(emailRows);
+  //await connection.query(`SET SQL_SAFE_UPDATES=1;`);
+  return emailRows[0];
+}
+
+// 디스코드인증
+async function verifyDiscord(connection, id, discord) {
+  const selectUserDiscordQuery = `
+                UPDATE User 
+                SET discord_auth = ?,
+                updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?;
+                `;
+            
+ // await connection.query(`SET SQL_SAFE_UPDATES=0;`);
+  //console.log('zz',email);
+  const [discordRows] = await connection.query(selectUserDiscordQuery, discord, id);
+  //console.log(emailRows);
+  //await connection.query(`SET SQL_SAFE_UPDATES=1;`);
+  return discordRows[0];
+}
+
+
 
 
 // 패스워드 체크
@@ -129,6 +164,7 @@ module.exports = {
   selectUserEmail,
   selectUserNickname,
   verifyEmail,
+  verifySchool,
   selectUserId,
   insertUser,
   selectUserPassword,
