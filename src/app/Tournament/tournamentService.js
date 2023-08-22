@@ -9,16 +9,69 @@ const crypto = require("crypto");
 const { connect } = require("http2");
 const fs = require('fs');
 
-const competitionProvider = require("./competitionProvider");
-const competitionDao = require("./competitionDao");
+const tournamentProvider = require("./tournamentProvider");
+const tournamentDao = require("./tournamentDao");
 const views = require("../../../views/template");
 const multer = require('multer');
 const path = require('path');
 
 const util = require('util');
+const { recordWinner } = require("./tournamentController");
 const unlinkPromise = util.promisify(fs.unlink); // Promisify fs.unlink for easier use
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
+
+// 대진표 초기설정
+exports.createTournamentBracket = async function (competitionId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const createTournamentBracketResult = await tournamentDao.createTournamentBracket(connection, competitionId);
+
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    }
+    catch (error) {
+
+        logger.error(`App - createTournamentBracket Service error\n: ${error.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
+
+// 대진표 승리팀 처리
+exports.recordWinner = async function (competitionId, teamId, round, matchNumber) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const recordWinnerResult = await tournamentDao.recordWinner(connection, competitionId, teamId, round, matchNumber);
+
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    }
+    catch (err) {
+        logger.error(`App - recordWinner Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
+
+// 대회 결과 저장
+exports.saveTournamentResult = async function (competitionId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const saveTournamentResultSet = await tournamentDao.saveTournamentResult(connection, competitionId);
+
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    }
+    catch (err) {
+        logger.error(`App - saveTournamentResult Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+
+}
+
+
+
+////////////////////////////////
+
 
 // 대회 create
 exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
@@ -59,7 +112,7 @@ exports.deleteCompetition = async function (competitionId) {
     try {
         const connection = await pool.getConnection();
         const competitionPosterPaths = await competitionDao.getPosterPath(connection, competitionId);
-        const competitionPdfPaths = await competitionDao.getPdfPath(connection,competitionId);
+        const competitionPdfPaths = await competitionDao.getPdfPath(connection, competitionId);
 
         const posterPaths = competitionPosterPaths[0].poster_path.split(',').map(item => `.\\${item}`);
         const pdfPaths = competitionPdfPaths[0].pdf_path.split(',').map(item => `.\\${item}`);
@@ -84,14 +137,14 @@ exports.deleteCompetition = async function (competitionId) {
 };
 
 // 대회 팀 등록
-exports.entryCompetitionTeam = async function (competitionId, entryCompetitionParams){
-    try{
+exports.entryCompetitionTeam = async function (competitionId, entryCompetitionParams) {
+    try {
         const connection = await pool.getConnection();
-        
+
         await competitionDao.entryCompetitionTeam(connection, competitionId, entryCompetitionParams);
         connection.release();
         return response(baseResponse.SUCCESS);
-    } catch(error){
+    } catch (error) {
         logger.error(`App - entryCompetitionTeam Service error\n: ${error}`);
         return errResponse(baseResponse.DB_ERROR);
     }
