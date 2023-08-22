@@ -157,4 +157,25 @@ module.exports = function (app) {
  *         description: 서버 오류
  */
     app.get('/api/team/:teamId', tournament.getTournamentTeamName);
+
+/**
+ * @swagger
+ * /api/tournament/{competitionId}/getRanking:
+ *   get:
+ *     summary: 대회 번호로 최종 순위 반환
+ *     tags: [대진표]
+ *     parameters:
+ *       - in: path
+ *         name: competitionId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 결과를 조회할 대회의 ID
+ *     responses:
+ *       200:
+ *         description: 최종 순위 조회 성공
+ *       500:
+ *         description: 서버 오류
+ */
+    app.get('/api/tournament/:competitionId/getRanking', tournament.getTournamentRanking);
 };

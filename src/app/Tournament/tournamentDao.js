@@ -59,9 +59,10 @@ async function createTournamentBracket(connection, competitionId) {
 // 대진표 등록된 팀들 반환
 async function getTournamentEntryTeam(connection, competitionId) {
   const getTournamentTeamNameQuery = `
-         SELECT *
-         FROM Tournament_Node
-         WHERE competition_id = ?;
+         SELECT t.team_name, tch.*
+         FROM Team_Competition_History tch
+         JOIN Team t ON tch.team_id = t.id
+         WHERE tch.competition_id = ?;
          `;
   const [getTournamentTeamNameRows] = await connection.query(getTournamentTeamNameQuery, [competitionId]);
   return getTournamentTeamNameRows;
@@ -125,14 +126,14 @@ async function saveTournamentResult(connection, competitionId){
          JOIN (
          SELECT team_id, RANK() OVER (ORDER BY point DESC) AS ranking
          FROM Team_Competition_History
-         WHERE competition_id = 1
+         WHERE competition_id = ?
          ) AS ranked ON tch.team_id = ranked.team_id
-         SET tch.rank = ranked.ranking
-         where competition_id = 1;
+         SET tch.grade = ranked.ranking
+         where competition_id = ?;
          `;
   try{
     await connection.query(getPointQuery, [competitionId]);
-    await connection.query(saveTournamentResultQuery, [competitionId]);
+    await connection.query(saveTournamentResultQuery, [competitionId, competitionId]);
 
     return true;
   }
@@ -152,148 +153,24 @@ async function getTournamentTeamName(connection, teamId) {
   return getTournamentTeamNameRows;
 }
 
+// competition_id로 대회결과반환
+async function getTournamentRanking(connection, competitionId){
+  const getTournamentRankingQuery = `
+         SELECT t.team_name, tch.team_id, tch.grade
+         FROM Team_Competition_History tch
+         JOIN Team t ON tch.team_id = t.id
+         WHERE tch.competition_id = ?;
+         `;
+  const [getTournamentRankingRows] = await connection.query(getTournamentRankingQuery, [competitionId]);
+  return getTournamentRankingRows;
+}
 
 module.exports = {
   createTournamentBracket,
   getTournamentEntryTeam,
   recordWinner,
   saveTournamentResult,
-  getTournamentTeamName
+  getTournamentTeamName,
+  getTournamentRanking
 };
 
-
-////////////////////////////
-
-// /*
-// // 모든 대회 조회
-// async function getCompetition(connection) {
-//   const getCompetitionListQuery = `
-//          SELECT * 
-//          FROM Competition;
-//          `;
-//   const [getTournamentTeamNameRows] = await connection.query(getCompetitionListQuery);
-//   return getTournamentTeamNameRows;
-// }
-
-// // id로 특정 대회 조회
-// async function getCompetitionById(connection, id) {
-//   const getCompetitionIdQuery = `
-//          SELECT * 
-//          FROM Competition
-//          WHERE id = ?;
-//          `;
-//   let num = parseInt(id);
-//   const [getTournamentTeamNameRows] = await connection.query(getCompetitionIdQuery, num);
-//   return getTournamentTeamNameRows;
-// }
-
-// // 대회 등록
-// async function createCompetition(connection, createCompetitionParams) {
-//   // host_id는 로그인 기능 구현 후 추가하기
-//   const createCompetitionQuery = `
-//          INSERT INTO Competition (competition_title, competition_content, event, dead_date, qualification, 
-//          prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
-//          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-//          `;
-//   const [getTournamentTeamNameRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
-//   // console.log('idrow : ',idRows);
-//   // console.log("Competition Rows:", getTournamentTeamNameRows); // 이 줄 추가
-//   return getTournamentTeamNameRows;
-// }
-
-// // id값을 입력해 db 수정
-// async function updateCompetition(connection, competitionId, updateCompetitionParams) {
-//   const updateCompetitionQuery = `
-//         UPDATE Competition 
-//         SET competition_title = ?, competition_content = ?, event = ?, dead_date = ?, qualification = ?, prize = ?,
-//         pre_date = ?, final_date = ?, poster_path = ?, pdf_path = ?, updated_at = CURRENT_TIMESTAMP
-//         WHERE id = ?;
-//         `;
-//   updateCompetitionParams.push(competitionId)
-//   const [getTournamentTeamNameRows] = await connection.query(updateCompetitionQuery, updateCompetitionParams);
-//   return getTournamentTeamNameRows;
-// }
-
-// // id값을 입력해 db 삭제
-// async function deleteCompetition(connection, competitionId) {
-//   const deleteCompetitionQuery = `
-//         DELETE FROM Competition
-//         WHERE id = ?
-//         `;
-//   const [getTournamentTeamNameRows] = await connection.query(deleteCompetitionQuery, competitionId);
-//   return getTournamentTeamNameRows;
-// }
-
-// // Id값을 입력해 db에 저장된 사진 경로 반환
-// async function getPosterPath(connection, competitionId) {
-//   const getPosterPathQuery = `
-//         SELECT poster_path 
-//         FROM Competition 
-//         WHERE id = ?
-//         `;
-//   const [getTournamentTeamNameRows] = await connection.query(getPosterPathQuery, competitionId);
-//   // console.log("Competition Rows:", getTournamentTeamNameRows); // 이 줄 추가
-//   return getTournamentTeamNameRows;
-// }
-
-// // Id값을 입력해 db에 저장된 pdf 경로 반환
-// async function getPdfPath(connection, competitionId) {
-//   const getPdfPathQuery = `
-//         SELECT pdf_path 
-//         FROM Competition 
-//         WHERE id = ?
-//         `;
-//   const [getTournamentTeamNameRows] = await connection.query(getPdfPathQuery, competitionId);
-//   return getTournamentTeamNameRows;
-// }
-
-// // 대회에 신청하면 Team 테이블에 팀명, 참가하는 대회id & Player 테이블에 선수 이름, 닉네임이 저장됨
-// async function entryCompetitionTeam(connection, competitionId, entryCompetitionParams) {
-//   const entryCompetitionTeamQuery = `
-//   INSERT INTO Team (team_name, competition_id, created_at, updated_at)
-//   VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-//   `;
-
-//   const entryCompetitionPlayerQuery = `
-//   INSERT INTO Player (team_id, nickname, isLeader, created_at, updated_at)
-//   VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-//   `;
-//   try {
-    
-//     const [team_name, ...nicknames] = entryCompetitionParams;
-//     entryCompetitionTeamQueryParams = [team_name, competitionId];
-//     await connection.query(entryCompetitionTeamQuery, entryCompetitionTeamQueryParams);
-
-//     const result = await connection.query('SELECT LAST_INSERT_ID()');
-//     const teamId = result[0][0]['LAST_INSERT_ID()'];
-
-//     for (let i = 0; i < nicknames.length; i++) {
-//       let isLeader = i === 0;
-//       let entryCompetitionPlayerQueryParams = [
-//         teamId,
-//         nicknames[i],
-//         isLeader,
-//       ];
-//       await connection.query(entryCompetitionPlayerQuery, entryCompetitionPlayerQueryParams);
-//     }
-
-//     return true;
-
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-
-// // id로 특정 대회 조회
-// async function getgetTournamentTeamName(connection, id) {
-//   const getgetTournamentTeamNameQuery = `
-//          SELECT team_name 
-//          FROM Team
-//          WHERE competition_id = ?;
-//          `;
-//   let num = [id];
-//   const [getTournamentTeamNameRows] = await connection.query(getgetTournamentTeamNameQuery, num);
-//   return getTournamentTeamNameRows;
-// }
-
-// */
