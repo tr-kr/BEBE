@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (account, email, password, nickname, birth) {
+exports.createUser = async function (email, password, name, nickname, birth) {
     try {
         // 이메일 중복 확인
         const emailRows = await userProvider.emailCheck(email);
@@ -26,14 +26,14 @@ exports.createUser = async function (account, email, password, nickname, birth) 
             .update(password)
             .digest("hex");
 
-        const insertUserInfoParams = [account, email, hashedPassword, nickname, birth];
+        const insertUserInfoParams = [email, hashedPassword, name, nickname, birth];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUser(connection, insertUserInfoParams);
         console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
-        return response(baseResponse.SUCCESS);
+        return response(baseResponse.SUCCESS, {id : userIdResult[0].insertId});
 
 
     } catch (err) {
@@ -42,11 +42,11 @@ exports.createUser = async function (account, email, password, nickname, birth) 
     }
 };
 
-exports.verifyEmail = async function (email) {
+exports.verifyEmail = async function (id) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
 
-        const userIdResult = await userDao.verifyEmail(connection, email);
+        const userIdResult = await userDao.verifyEmail(connection, id);
         connection.release();
         //console.log(`서비스:`, email);
 

@@ -70,50 +70,68 @@ exports.register = async function (req, res) {
     /**
      * Body: email, password, nickname
      */
-    const {account, password, nickname, email, birth} = req.body;
+    const { password, name, nickname, email, birth} = req.body;
 
     const signUpResponse = await userService.createUser(
-        account,
+       // account,
         email,
         password,
+        name,
         nickname,
         birth
     );
+   // console.log(signUpResponse.result.id);
+
+
+
+    if(signUpResponse.isSuccess === true){ // 회원가입 성공시 
+      const data = {
+        id : signUpResponse.result.id,
+        email : email
+      }
+      const headers = {
+        'Content-Type': 'application/json'
+      }
+      const sendEmailResponse = await axios.post('http://localhost:3000/api/verification/send-verification-email',data, {headers});
+      //return res.send({sendEmailResponse});
+      if(sendEmailResponse.isSuccess === false)
+        return sendEmailResponse;
+    }
     return res.send(signUpResponse);
 };
 
 const transporter = nodemailer.createTransport({
-    service: 'Naver', // 이메일 서비스
-    host: 'smtp.naver.com',
+    service: 'Gmail', // 이메일 서비스
+    host: 'smtp.gmail.com',
     port: 587,
     secure : false,
     auth: {
-      user: 'won000111@naver.com', // 보내는 이메일 주소
-      pass: '@@won0102' // 비밀번호 또는 액세스 토큰
+      user: 'trkrmanager@gmail.com', // 보내는 이메일 주소
+      pass: 'ykiyecygodrzsanu' // 비밀번호 또는 액세스 토큰
     }
   });
-  const mailOptions = {
-    from: 'won000111@naver.com',
-    to: email,
-    subject: '본인 확인 이메일',
-    html: emailContent
-  };
 
   exports.send_verification_email = async function(req, res){
 
 
-    const { email } = req.body;
-    console.log(email);
+    const { id, email } = req.body;
+    console.log(id, email);
     //const email = `ryu_eclipse@naver.com`;
     // 토큰 생성
-    const token = jwt.sign({ email }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ id,email }, secretKey, { expiresIn: '1h' });
   
     // 이메일 내용 템플릿 생성
     const emailContent = `
       <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
       http://localhost:3000/api/verification/verify?token=${token}
     `;
-
+    const mailOptions = {
+      from: 'trkrmanager@gmail.com',
+      to: email,
+      subject: '본인 확인 이메일',
+      html: emailContent
+    };
+  
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error('이메일 전송 오류:', error);
@@ -130,10 +148,10 @@ async function verifyEmail(req, res) {
      * Body: email, password, nickname
      */
     //console.log(req);
-    const {email} = req;
+    const {id, email} = req;
 
     //console.log('컨트롤러,', email);
-    const verifyResponse = await userService.verifyEmail(email);
+    const verifyResponse = await userService.verifyEmail(id);
     //console.log(verifyResponse);
     return verifyResponse;
 };
@@ -145,7 +163,7 @@ exports.verify = async function(req, res){
       const decoded = jwt.verify(token, secretKey);
       console.log(decoded.email);
       
-      verifyEmail({email : decoded.email})
+      verifyEmail({id : decoded.id})
       .then(result =>{
         //console.log('qqq' + result);
       })
@@ -171,7 +189,7 @@ exports.send_verification_school_email = async function(req, res){
 
 //곧 토큰방식으로 교체 예정
   const { id, email } = req.body;
-  console.log(email);
+  console.log(id, email);
   // 토큰 생성
   const token = jwt.sign({ id, email }, secretKey, { expiresIn: '1h' });
 
@@ -181,6 +199,12 @@ exports.send_verification_school_email = async function(req, res){
     http://localhost:3000/api/verification/verify_school?token=${token}
   `;
 
+  const mailOptions = {
+    from: 'trkrmanager@gmail.com',
+    to: email,
+    subject: '본인 확인 이메일',
+    html: emailContent
+  };
 
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -194,34 +218,36 @@ exports.send_verification_school_email = async function(req, res){
   })
 };
 
-async function update_school(req, res) {
+// async function update_school(req, res) {
 
-  /**
-   * Body: email, password, nickname
-   */
-  //console.log(req);
-  const {id, email} = req;
+//   /**
+//    * Body: email, password, nickname
+//    */
+//   //console.log(req);
+//   const {id, email} = req;
 
-  //console.log('컨트롤러,', email);
-  const verifyResponse = await userService.verifySchool(id, email);
-  //console.log(verifyResponse);
-  return verifyResponse;
-};
+//   //console.log('컨트롤러,', email);
+//   const verifyResponse = await userService.verifySchool(id, email);
+//   //console.log(verifyResponse);
+//   return verifyResponse;
+// };
 
 exports.verify_school = async function(req, res){
   const { token } = req.query;
   
   try {
     const decoded = jwt.verify(token, secretKey);
-    console.log(decoded.email);
-    
-    update_school({id : decoded.id, email : decoded.email})
-    .then(result =>{
-      //console.log('qqq' + result);
-    })
-    .catch(err =>{
-      //console.log('zz' + err);
-    })
+    //console.log(decoded.id, decoded.email);
+    const {id, email} = decoded;
+    console.log(id, email);
+    const verifyResponse = await userService.verifySchool(id, email);
+    // update_school({id : decoded.id, email : decoded.email})
+    // .then(result =>{
+    //   //console.log('qqq' + result);
+    // })
+    // .catch(err =>{
+    //   //console.log('zz' + err);
+    // })
 
     //console.log(verifyREsult);
     // 토큰 유효한 경우
@@ -440,6 +466,8 @@ const REDIRECT_URI = 'http://localhost:3000/api/auth/discord/callback';
 
 
 exports.tryDiscord = async function(req, res){
+  //await axios.get(`https://discord.com/api/v10/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
+
   res.redirect(`https://discord.com/api/v10/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
 }
 
@@ -468,25 +496,27 @@ exports.callbackDiscord = async function(req, res){
     const user = userResponse.data;
     //console.log(user);
     
-    res.send(`${user.username}#${user.discriminator}`);
+    return user.username;
+    //const discord = user.usernmae + user.discriminator;
+
+    //await userService.verifyDiscord(id, discord);
 
   }catch(err){
     console.log('에러어레', err);
     return res.send(errResponse(baseResponseStatus.SIGNIN_EMAIL_ERROR_TYPE));
-  }
-
+  }  
 };
 
-async function update_Discord(req, res) {
+exports.updateDiscord = async function(req, res) {
 
   /**
    * Body: email, password, nickname
    */
   //console.log(req);
-  const {id, discord} = req;
+  const {id, discord} = req.body;
 
   //console.log('컨트롤러,', email);
   const verifyResponse = await userService.verifyDiscord(id, discord);
   //console.log(verifyResponse);
-  return verifyResponse;
+  return res.send(verifyResponse);
 };

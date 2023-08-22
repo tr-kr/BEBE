@@ -1,11 +1,11 @@
 ﻿CREATE TABLE `User` (
 	`id`	INT	AUTO_INCREMENT NOT NULL,
-	`account`	VARCHAR(255)	NULL,
+	`email`	VARCHAR(255)	NULL,
+	`emailVerified`	BOOLEAN	NULL,
 	`password`	VARCHAR(255)	NULL,
+	`name`	VARCHAR(255)	NULL,
 	`nickname`	VARCHAR(255)	NULL,
 	`birth`	DATE	NULL,
-	`phone_number`	VARCHAR(255)	NULL,
-	`email`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL,
 	`discord_auth`	VARCHAR(255)	NULL,
@@ -14,8 +14,7 @@
 	`played_competition`	INT	NULL,
 	`played_match`	INT	NULL,
 	`win`	INT	NULL,
-	`lose`	INT	NULL,
-	`emailVerified`	BOOLEAN	NULL
+	`lose`	INT	NULL
 );
 
 CREATE TABLE `Competition` (
@@ -65,20 +64,15 @@ CREATE TABLE `Tournament_Node` (
 	`updated_at`	TIMESTAMP	NULL
 );
 
-CREATE TABLE `Team_Match_History` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
-	`match_id`	INT	NOT NULL,
-	`competition_id`	INT	NOT NULL,
-	`team_id`	INT	NOT NULL,
-	`is_won`	BOOLEAN	NULL
-);
+
 
 CREATE TABLE `Team_Competition_History` (
 	`id`	INT	AUTO_INCREMENT	NOT NULL,
 	`competition_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
 	`id2`	INT	NOT NULL,
-	`ranking`	INT	NULL
+	`ranking`	INT	NULL,
+	`point`	INT	NULL
 );
 
 ALTER TABLE `User` ADD CONSTRAINT `PK_USER` PRIMARY KEY (

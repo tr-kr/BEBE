@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Child Window</title>
+</head>
+<body>
+  <script>
+    // API 호출 및 반환 값 가져오기
+    const apiResponse = 'API response value'; // 실제 API 호출 및 반환 값 대신에 임시로 사용
+    
+    const parentWindow = window.opener;
+
+    fetch(`http://localhost:3000/api/auth/discord`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+
+    })
+
+    // 부모 창의 updateResultValue 함수 호출하여 텍스트박스 업데이트
+    parentWindow.updateResultValue(Response);
+
+    // 창 닫기 (선택사항)
+    window.close();
+  </script>
+</body>
+</html>

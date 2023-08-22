@@ -34,13 +34,14 @@ module.exports = function(app){
     app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
 ////////////////////////////////////////////////////////////////
 //작성자 : 류지원
-//디스코드, 라이엇 인증 API
+//디스코드 인증 API
 
 app.get('/api/auth/discord', user.tryDiscord)
-app.get('/api/auth/discord/callback', user.callbackDiscord);
+let z = app.get('/api/auth/discord/callback', user.callbackDiscord);
+app.post('/api/auth/discord/update', user.updateDiscord);
 
 //작성자 : 류지원
-//디스코드, 라이엇 인증 API
+// 라이엇 인증 API
 
 app.post('/api/verification/send-verification-school-email', user.send_verification_school_email);
 app.get('/api/verification/verify_school', user.verify_school);

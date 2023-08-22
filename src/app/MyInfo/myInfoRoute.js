@@ -58,7 +58,9 @@ module.exports = function(app){
     type: array
     items:
     */
-    app.get('/api/user/myInfo', jwtMiddleware, user.getUserById);
+   
+    app.get('/api/user/:userId', user.getUserById);
+    //app.get('/api/user/myInfo', jwtMiddleware, user.getUserById);
     // 특정유저 수정 API
     app.put('/api/user/:userId', user.updateUser);
 

@@ -86,8 +86,11 @@ exports.getUserById = async function (req, res) {
      * Path Variable: userId
      */
     //const {token} = req.query;
-    console.log(req.verifiedToken);
-    const userId = req.verifiedToken.useridx;
+    
+    //console.log(req.verifiedToken);
+    const userId = req.params.userId;
+    //if(req.params.userId) userId = req.params.userId;
+    //else userId = req.verifiedToken.useridx;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);
