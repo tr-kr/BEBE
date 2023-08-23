@@ -22,7 +22,7 @@ async function selectUserEmail(connection, email) {
 // userId 회원 조회
 async function selectUserId(connection, userId) {
   const selectUserIdQuery = `
-                 SELECT nickname, password, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose, birth, emailVerified
+                 SELECT name, nickname, password, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose, birth, emailVerified
                  FROM User 
                  WHERE id = ?;
                  `;

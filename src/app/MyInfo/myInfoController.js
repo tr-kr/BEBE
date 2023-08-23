@@ -1,5 +1,6 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
 const userProvider = require("../../app/MyInfo/myInfoProvider");
+const competitionProvider = require("../../app/Competition/competitionProvider");
 const userService = require("../../app/MyInfo/myInfoService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
@@ -88,9 +89,9 @@ exports.getUserById = async function (req, res) {
     //const {token} = req.query;
     
     //console.log(req.verifiedToken);
-    //const userId = req.params.userId;
+    const userId = req.params.userId;
     //if(req.params.userId) userId = req.params.userId;
-    const userId = req.verifiedToken.useridx;
+    //else userId = req.verifiedToken.useridx;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);
@@ -106,9 +107,18 @@ exports.getPlayListById = async function (req, res) {
     const userId = req.params.userId;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
-    const userByUserId = await userProvider.retrievePlayList(userId);
-    console.log('[참여한 대회 조회]',userId, userByUserId.nickname);
-    return res.send(response(baseResponse.SUCCESS, userByUserId));
+    const CompetitionIds = await userProvider.retrievePlayList(userId);
+    console.log('[참여한 대회 조회]',userId);
+
+    const playList = [];
+    for (const competitionId of CompetitionIds) {
+        const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
+        playList.push(result);
+    }
+
+    return res.send(response(baseResponse.SUCCESS, playList));
+
+    return res.send(response(baseResponse.SUCCESS, CompetitionIds));
 };
 
 exports.getHostListById = async function (req, res) {
@@ -137,6 +147,7 @@ exports.updateUser = async function (req, res) {
     const {nickname, password} = req.body;
     
     const id = req.params.userId;
+
 
     const signUpResponse = await userService.editUser(
         id,
