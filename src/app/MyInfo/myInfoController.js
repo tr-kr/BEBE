@@ -82,7 +82,7 @@ exports.getUsers = async function (req, res) {
  * [GET] /app/users?token=토큰}
  */
 exports.getUserById = async function (req, res) {
-    console.log(req.query);
+    console.log("id로 접근",req.query);
     /**
      * Path Variable: userId
      */
@@ -100,7 +100,7 @@ exports.getUserById = async function (req, res) {
 };
 
 exports.getUserByToken = async function (req, res) {
-
+    console.log('asdasdsa');
 
     //const {token} = req.query;
     

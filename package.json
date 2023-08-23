@@ -32,7 +32,8 @@
     "sha512": "^0.0.1",
     "vary": "^1.1.2",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.2.1"
+    "winston-daily-rotate-file": "^4.2.1",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "swagger-jsdoc": "^6.2.8",

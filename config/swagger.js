@@ -11,7 +11,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://172.30.1.99:3000/", // 요청 URL
+        url: "https://ryueclipse.shop/", // 요청 URL
       },
     ],
   },

@@ -72,7 +72,11 @@ exports.register = async function (req, res) {
      */
     const { password, name, nickname, email, birth} = req.body;
 
-    const signUpResponse = await userService.createUser(
+    // 형식 체크 (by 정규표현식)
+    if (!regexEmail.test(email))
+        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
+    
+        const signUpResponse = await userService.createUser(
        // account,
         email,
         password,
@@ -92,7 +96,7 @@ exports.register = async function (req, res) {
       const headers = {
         'Content-Type': 'application/json'
       }
-      const sendEmailResponse = await axios.post('http://172.30.1.99:3000/api/verification/send-verification-email',data, {headers});
+      const sendEmailResponse = await axios.post('http://localhost:3000/api/verification/send-verification-email',data, {headers});
       //return res.send({sendEmailResponse});
       if(sendEmailResponse.isSuccess === false)
         return sendEmailResponse;
@@ -123,7 +127,7 @@ const transporter = nodemailer.createTransport({
     // 이메일 내용 템플릿 생성
     const emailContent = `
       <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
-      http://172.30.1.99:3000/api/verification/verify?token=${token}
+      https://ryueclipse.shop/api/verification/verify?token=${token}
     `;
     const mailOptions = {
       from: 'trkrmanager@gmail.com',
@@ -200,7 +204,7 @@ exports.send_verification_school_email = async function(req, res){
   // 이메일 내용 템플릿 생성
   const emailContent = `
     <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
-    http://localhost:3000/api/verification/verify_school?token=${token}
+    https://ryueclipse.shop/api/verification/verify_school?token=${token}
   `;
 
   const mailOptions = {

@@ -101,7 +101,7 @@ module.exports = function(app){
  *                   type: string
  */
 
-    app.get('/api/user/:userId', user.getUserById);
+    //app.get('/api/user/:userId', user.getUserById);
 
     /**
  * @swagger
@@ -173,6 +173,8 @@ module.exports = function(app){
  *                   type: string
  */
     app.get('/api/user/myInfo', jwtMiddleware, user.getUserByToken);
+
+    
 /**
  * @swagger
  * /api/user/{userId}:
@@ -220,7 +222,7 @@ module.exports = function(app){
  *                   type: string
  */
 
-    app.put('/api/user/:userId', user.updateUser);
+    //app.put('/api/user/:userId', user.updateUser);
 
 
 

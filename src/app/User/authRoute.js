@@ -62,7 +62,7 @@ module.exports = function (app) {
   /**
    * @swagger
    * /api/deleteuser?token={token}:
-   *   delete:
+   *   get:
    *     summary: 회원탈퇴
    *     description: Use this API to delete the authenticated user's account.
    *     security:
