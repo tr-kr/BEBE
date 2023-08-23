@@ -130,11 +130,11 @@ exports.getPlayListById = async function (req, res) {
     const playList = [];
     for (const competitionId of CompetitionIds) {
         const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
-       // console.log(result[0]);
+
         playList.push({...result[0],ranking : competitionId.ranking});
-    //    playList.push();
+
     }
-    console.log(playList[1]);
+
     return res.send(response(baseResponse.SUCCESS, playList));
 };
 
@@ -152,11 +152,10 @@ exports.getPlayListByToken = async function (req, res) {
     const playList = [];
     for (const competitionId of CompetitionIds) {
         const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
-       // console.log(result[0]);
         playList.push({...result[0],ranking : competitionId.ranking});
-    //    playList.push();
+
     }
-    console.log(playList[1]);
+
     return res.send(response(baseResponse.SUCCESS, playList));
 };
 
@@ -169,9 +168,19 @@ exports.getHostListById = async function (req, res) {
     const userId = req.params.userId;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
-    const userByUserId = await userProvider.retrieveHostList(userId);
-    console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
-    return res.send(response(baseResponse.SUCCESS, userByUserId));
+    const CompetitionIds = await userProvider.retrieveHostList(userId);
+    console.log('[개최한 대회 조회]',userId);
+
+
+    const hostList = [];
+    for (const competitionId of CompetitionIds) {
+        const result = await competitionProvider.retrieveHostList(competitionId.competition_id);
+
+        hostList.push({...result[0],ranking : competitionId.ranking});
+
+    }
+
+    return res.send(response(baseResponse.SUCCESS, hostList));
 };
 
 exports.getHostListByToken = async function (req, res) {
@@ -181,11 +190,20 @@ exports.getHostListByToken = async function (req, res) {
      */
 
     const userId = req.verifiedToken.useridx;
-    
+
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveHostList(userId);
     console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
-    return res.send(response(baseResponse.SUCCESS, userByUserId));
+    
+    const hostList = [];
+    for (const competitionId of CompetitionIds) {
+        const result = await competitionProvider.retrieveHostList(competitionId.competition_id);
+
+        hostList.push({...result[0],ranking : competitionId.ranking});
+
+    }
+
+    return res.send(response(baseResponse.SUCCESS, hostList));
 };
 
 /**

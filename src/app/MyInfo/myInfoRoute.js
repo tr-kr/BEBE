@@ -113,11 +113,11 @@ module.exports = function(app){
  *     description: 특정 사용자의 정보를 조회합니다.
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: token
  *         required: true
  *         schema:
  *           type: string
- *         description: 조회할 사용자의 ID입니다.
+ *         description: 조회할 사용자의 token입니다.
  *     responses:
  *       200:
  *         description: 사용자 정보와 성공 메시지가 포함된 응답입니다.
@@ -234,11 +234,11 @@ module.exports = function(app){
  *     description: 사용자의 별명과 비밀번호를 업데이트합니다.
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: token
  *         required: true
  *         schema:
  *           type: string
- *         description: 업데이트할 사용자의 ID입니다.
+ *         description: 업데이트할 사용자의 token입니다.
  *       - in: body
  *         name: user
  *         required: true
@@ -330,11 +330,11 @@ module.exports = function(app){
     *     description: 특정 사용자가 참가한 대회 목록을 조회합니다.
     *     parameters:
     *       - in: path
-    *         name: userId
+    *         name: token
     *         required: true
     *         schema:
     *           type: string
-    *         description: 참가 대회 목록을 조회할 사용자의 ID입니다.
+    *         description: 참가 대회 목록을 조회할 사용자의 token입니다.
     *     responses:
     *       200:
     *         description: 사용자의 참가 대회 목록과 성공 메시지가 포함된 응답입니다.
@@ -424,11 +424,11 @@ module.exports = function(app){
  *     description: 특정 사용자가 개최한 대회 목록을 조회합니다.
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: token
  *         required: true
  *         schema:
  *           type: string
- *         description: 개최한 대회 목록을 조회할 사용자의 ID입니다.
+ *         description: 개최한 대회 목록을 조회할 사용자의 token입니다.
  *     responses:
  *       200:
  *         description: 사용자가 개최한 대회 ID 목록과 성공 메시지가 포함된 응답입니다.
