@@ -15,10 +15,8 @@ const options = {
       },
     ],
   },
-  apis: ["./src/app/Competition/*.js"], //Swagger 파일 연동
+  apis: ["./src/app/MyInfo/*.js", "./src/app/Auth_test/*.js", "./src/app/Competition/*.js", "./src/app/Tournament/*.js"]
 };
 const specs = swaggerJsdoc(options);
 
 module.exports = { swaggerUi, specs };
-
-console.log(JSON.stringify(specs, null, 2));

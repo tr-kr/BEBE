@@ -13,18 +13,121 @@ module.exports = function(app){
     // app.get('/app/test', user.getTest)
 
     // // 1. 유저 생성 (회원가입) API
-    app.post('/app/users', user.postUsers);
+
+    //app.post('/app/users', user.postUsers);
 
     /////////////////////////////////////회원가입
-    app.post('/api/signup/accountCheck', user.accountCheckTest);
-    app.post('/api/signup/nicknameCheck', user.nicknameCheckTest);
+    //app.post('/api/signup/accountCheck', user.accountCheckTest);
+    //app.post('/api/signup/nicknameCheck', user.nicknameCheckTest);
+    /**
+ * @swagger
+ * tags:
+ *   name: 회원가입
+ *   description: 사용자 회원가입과 관련된 API
+ * 
+ * /api/signup/emailCheck:
+ *   post:
+ *     tags:
+ *       - 회원가입
+ *     summary: 이메일 중복 확인
+ *     description: 입력한 이메일이 이미 등록되어 있는지 확인합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *             example:
+ *               email: example@gmail.com
+ *     responses:
+ *       200:
+ *         description: 이메일 중복 확인 결과에 따른 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
     app.post('/api/signup/emailCheck', user.emailCheckTest);
-    app.post('/api/signup', user.register);
-    //app.post('/api/users/verify-email', user.verifyEmail);
 
+    /**
+ * @swagger
+ * tags:
+ *   name: 회원가입
+ *   description: 사용자 회원가입과 관련된 API
+ * 
+ * /api/signup:
+ *   post:
+ *     tags:
+ *       - 회원가입
+ *     summary: 사용자 회원가입
+ *     description: 사용자의 회원가입을 처리합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               nickname:
+ *                 type: string
+ *               birth:
+ *                 type: string
+ *             example:
+ *               email: example@gmail.com
+ *               password: examplepassword
+ *               name: John Doe
+ *               nickname: JohnDoe
+ *               birth: 1990-01-01
+ *     responses:
+ *       200:
+ *         description: 회원가입 성공 후 생성된 사용자 ID와 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+    app.post('/api/signup', user.register);
     
     // 2. 유저 조회 API (+ 검색)
-    app.get('/app/users',user.getUsers); 
+ //   app.get('/app/users',user.getUsers); 
 
 
 
@@ -35,68 +138,210 @@ module.exports = function(app){
     // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
     app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
 ////////////////////////////////////////////////////////////////
-//작성자 : 류지원
-//디스코드, 라이엇 인증 API
+    //작성자 : 류지원
+    //디스코드 인증 API
+/**
+ * @swagger
+ * tags:
+ *   name: 인증
+ *   description: 사용자 마이페이지 정보 조회 및 수정과 관련된 API
+ * 
+ * /api/auth/discord:
+*     tags:
+ *       - 인증
+ *     summary: Discord 로그인 시도
+ *     description: Discord 로그인을 시도합니다.
+ *     responses:
+ *       302:
+ *         description: Discord 로그인 페이지로 리다이렉트합니다.
+ */
+    app.get('/api/auth/discord', user.tryDiscord);
 
-//      app.get('/api/auth/discord', user.tryAuthDiscord);
+    /**
+ * @swagger
+ * tags:
+ *   name: 인증
+ *   description: 사용자 마이페이지 정보 조회 및 수정과 관련된 API
+ * 
+ * /api/auth/discord/callback:
+ *   get:
+*     tags:
+ *       - 인증
+ *     summary: Discord 콜백 처리
+ *     description: Discord 로그인 후 콜백을 처리합니다.
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Discord 콜백 코드입니다.
+ *     responses:
+ *       200:
+ *         description: Discord 콜백 처리 결과와 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 
-//     //계정인증시 콜백
-//     app.get('/api/auth/discord/success', user.authDiscord);
+    app.get('/api/auth/discord/callback', user.callbackDiscord);
 
-// const axios = require('axios');
-// const CLIENT_ID = '1138439231073693736';
-// const CLIENT_SECRET = '4f34a94c10adfd93b336fd0265fc8157ea9421b6a35c911e2559fa0f6c9c15d1';
-// const REDIRECT_URI = 'http://localhost:3000/api/auth/discord/success';
+    /**
+ * @swagger
+ * tags:
+ *   name: 인증
+ *   description: 사용자 인증과 관련된 API
+ * 
+ * /api/auth/discord/update:
+ *   post:
+*     tags:
+ *       - 인증
+ *     summary: Discord 정보 업데이트
+ *     description: 사용자의 Discord 정보를 업데이트합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               discord:
+ *                 type: string
+ *             example:
+ *               id: 1
+ *               discord: DiscordUser#1234
+ *     responses:
+ *       200:
+ *         description: Discord 정보 업데이트 성공 후 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+    app.post('/api/auth/discord/update', user.updateDiscord);
 
+    //작성자 : 류지원
+    // 라이엇 인증 API
 
-// app.get('/api/auth/discord', (req, res) => {
-//   res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
-// });
+/**
+ * @swagger
+ * tags:
+ *   name: 인증
+ *   description: 사용자 인증과 관련된 API
+ * 
+ * /api/verification/send-verification-school-email:
+ *   post:
+*     tags:
+ *       - 인증
+ *     summary: 학교 이메일 인증 이메일 전송
+ *     description: 사용자의 학교 이메일로 인증 이메일을 전송합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               email:
+ *                 type: string
+ *             example:
+ *               id: 1
+ *               email: example@example.com
+ *     responses:
+ *       200:
+ *         description: 학교 이메일 인증 이메일 전송 성공 후 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 
-// app.get('/api/auth/discord/success', async (req, res) => {
-//   const code = req.query.code;
+    app.post('/api/verification/send-verification-school-email', user.send_verification_school_email);
+    
+    /**
+ * @swagger
+ * tags:
+ *   name: 인증
+ *   description: 사용자 인증과 관련된 API
+ * 
+ * /api/verification/verify_school:
+ *   get:
+ *     tags:
+ *       - 인증
+ *     summary: 학교 이메일 인증 확인
+ *     description: 학교 이메일 인증을 확인하고 본인 확인을 완료합니다.
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 학교 이메일 인증 토큰입니다.
+ *     responses:
+ *       200:
+ *         description: 학교 이메일 인증 확인 성공 후 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+    app.get('/api/verification/verify_school', user.verify_school);
 
-//   try {
-//     console.log(1);
-
-//     const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', {
-//       method: 'POST',
-//       body: new URLSearchParams({
-//         client_id: CLIENT_ID,
-//         client_secret: CLIENT_SECRET,
-//         code : code,
-//         grant_type: 'authorization_code',
-//         redirect_uri: REDIRECT_URI,
-//         scope: 'identify',
-//       }).toString(),
-//       headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//       },
-//     });
-//       console.log(tokenResponse);
-
-
-//       console.log(6);
-//       //const accessToken = tokenResponse.data.access_token;
-//       const accessToken = tokenResponse.data.access_token;
-//       console.log(2);
-
-
-//      const userResponse = await axios.get('https://discord.com/api/users/@me', {
-//        headers: {
-//          Authorization: `Bearer ${accessToken}`,
-//        },
-//      });
-
-//      const user = userResponse.data;
-//      // 여기서 user 정보를 활용하여 사용자 인증 및 처리 로직을 진행합니다.
-
-//      res.send(`Hello, ${user.username}#${user.discriminator}!`);
-//   } catch (error) {
-//     console.error('Error:', error.message);
-//     res.send('An error occurred.');
-//   }
-// });
 
 
 // // Riot Games API Key

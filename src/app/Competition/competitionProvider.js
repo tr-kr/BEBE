@@ -5,8 +5,8 @@ const competitionDao = require("./competitionDao");
 
 // Provider: Read 비즈니스 로직 처리
 
-exports.retrieveCompetitionList = async function (id) {
-  if (!id) {
+exports.retrieveCompetitionList = async function (competitionId) {
+  if (!competitionId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const competitionListResult = await competitionDao.getCompetition(connection);
     connection.release();
@@ -15,7 +15,7 @@ exports.retrieveCompetitionList = async function (id) {
 
   } else {
     const connection = await pool.getConnection(async (conn) => conn);
-    const competitionListResult = await competitionDao.getCompetitionById(connection, id);
+    const competitionListResult = await competitionDao.getCompetitionById(connection, competitionId);
     connection.release();
 
     return competitionListResult;
@@ -23,66 +23,12 @@ exports.retrieveCompetitionList = async function (id) {
 };
 
 exports.retrieveCompetitionEntryTeamList = async function (competitionId) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  console.log(competitionId);
-  const competitionEntryTeamListResult = await competitionDao.getCompetitionEntryTeam(connection, competitionId);
-  connection.release();
-
-  return competitionEntryTeamListResult;
-};
-
-
-
-/*
-exports.retrieveUserList = async function (email) {
-  if (!email) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUser(connection);
+    console.log(competitionId);
+    const competitionEntryTeamListResult = await competitionDao.getCompetitionEntryTeam(connection, competitionId);
     connection.release();
 
-    return userListResult;
-
-  } else {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const userListResult = await userDao.selectUserEmail(connection, email);
-    connection.release();
-
-    return userListResult;
-  }
+    return competitionEntryTeamListResult;
 };
 
-exports.retrieveUser = async function (userId) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const userResult = await userDao.selectUserId(connection, userId);
 
-  connection.release();
-
-  return userResult[0];
-};
-
-exports.emailCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const emailCheckResult = await userDao.selectUserEmail(connection, email);
-  connection.release();
-
-  return emailCheckResult;
-};
-
-exports.passwordCheck = async function (selectUserPasswordParams) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const passwordCheckResult = await userDao.selectUserPassword(
-      connection,
-      selectUserPasswordParams
-  );
-  connection.release();
-  return passwordCheckResult[0];
-};
-
-exports.accountCheck = async function (email) {
-  const connection = await pool.getConnection(async (conn) => conn);
-  const userAccountResult = await userDao.selectUserAccount(connection, email);
-  connection.release();
-
-  return userAccountResult;
-};
-*/

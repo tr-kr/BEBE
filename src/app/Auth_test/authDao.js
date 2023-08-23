@@ -54,8 +54,8 @@ async function selectUserId(connection, userId) {
 // 유저 생성
 async function insertUser(connection, insertUserInfoParams) {
   const insertUserInfoQuery = `
-        INSERT INTO User(account, email, password, nickname, birth, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        INSERT INTO User(email, password, name, nickname, birth, created_at, updated_at)
+        VALUES ( ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
     `;
   const insertUserInfoRow = await connection.query(
     insertUserInfoQuery,
@@ -66,21 +66,56 @@ async function insertUser(connection, insertUserInfoParams) {
 }
 
 // 이메일인증
-async function verifyEmail(connection, email) {
+async function verifyEmail(connection, id) {
   const selectUserEmailQuery = `
                 UPDATE User 
                 SET emailVerified = true,
                 updated_at = CURRENT_TIMESTAMP
-                WHERE email = ?;
+                WHERE id = ?;
                 `;
             
   await connection.query(`SET SQL_SAFE_UPDATES=0;`);
   //console.log('zz',email);
-  const [emailRows] = await connection.query(selectUserEmailQuery, email);
+  const [emailRows] = await connection.query(selectUserEmailQuery, id);
   //console.log(emailRows);
   await connection.query(`SET SQL_SAFE_UPDATES=1;`);
   return emailRows[0];
 }
+
+// 학교이메일인증
+async function verifySchool(connection, id, email) {
+  const selectUserEmailQuery = `
+                UPDATE User 
+                SET school_auth = ?,
+                updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?;
+                `;
+    console.log("다오",id, email);
+  //await connection.query(`SET SQL_SAFE_UPDATES=0;`);
+  //console.log('zz',email);
+  const [emailRows] = await connection.query(selectUserEmailQuery, [email, id]);
+  //console.log(emailRows);
+  //await connection.query(`SET SQL_SAFE_UPDATES=1;`);
+  return emailRows[0];
+}
+
+// 디스코드인증
+async function verifyDiscord(connection, id, discord) {
+  const selectUserDiscordQuery = `
+                UPDATE User 
+                SET discord_auth = ?,
+                updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?;
+                `;
+            
+ // await connection.query(`SET SQL_SAFE_UPDATES=0;`);
+  //console.log('zz',email);
+  const [discordRows] = await connection.query(selectUserDiscordQuery, [discord, id]);
+  //console.log(emailRows);
+  //await connection.query(`SET SQL_SAFE_UPDATES=1;`);
+  return discordRows[0];
+}
+
 
 
 
@@ -129,6 +164,8 @@ module.exports = {
   selectUserEmail,
   selectUserNickname,
   verifyEmail,
+  verifySchool,
+  verifyDiscord,
   selectUserId,
   insertUser,
   selectUserPassword,

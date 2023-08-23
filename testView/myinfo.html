@@ -45,8 +45,8 @@
   <button id="authRiotButton">라이엇인증</button><br>
 
   <label for="school">school: </label>
-  <input type="text" id="school" name="schoold">
-  <button id="authEmailButton">학교/단체메일 인증</button><br>
+  <input type="text" id="school" name="school">
+  <button id="authSchoolButton">학교/단체메일 인증</button><br>
 
 
 
@@ -81,7 +81,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const authemailButton = document.getElementById('authemailButton');
 
-      //닉네임 변경
+      //이메일인증 테스트
       authemailButton.addEventListener('click', () => {
 
         const email = document.getElementById('inputemail').value;
@@ -111,8 +111,51 @@
         });
       });
 
+      
+      //학교 이메일인증
+      authSchoolButton.addEventListener('click', () => {
+        const id = document.getElementById('user').value;
+        const email = document.getElementById('school').value;
+
+        // 서버로 보낼 요청 데이터
+        const requestData = {
+          id : id,
+          email: email,
+          //password: null,
+        };
+
+        // AJAX를 사용하여 서버에 회원 정보 수정 요청 보냄
+        fetch(`http://localhost:3000/api/verification/send-verification-school-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          alert('이메일발송성공');
+        })
+        .catch((error) => {
+          console.error('Error updating user data:', error);
+          alert('이메일발송 실패 실패했습니다.');
+        });
+      });
 
 
+
+      //디스코드 인증
+     
+      authDiscordButton.addEventListener('click', () => {
+        let discordWindow = window.open('http://localhost:3000/api/auth/discord', 'discord Window', 'width=600,height=800');
+        
+        discordWindow.addEventListener('unload', function(){
+        console.log('zzzz',discordWindow.document.body);
+      })
+      });
+
+     
 
 
 
@@ -135,7 +178,7 @@
           // 받아온 데이터를 텍스트박스에 채워 넣음
           console.log(data);
           document.getElementById('nickname').value = data.nickname;
-          document.getElementById('userId').value = data.account;
+          //document.getElementById('userId').value = data.account;
           document.getElementById('email').value = data.email;
           document.getElementById('verifiedEmail').value = data.emailVerified;
           document.getElementById('password').value = data.password;
@@ -248,9 +291,6 @@
           alert('회원 정보 수정에 실패했습니다.');
         });
       });
-
-
-
 
 
       //패스워드 변경

@@ -78,14 +78,19 @@ exports.getUsers = async function (req, res) {
 /**
  * API No. 3
  * API Name : 특정 유저 조회 API
- * [GET] /app/users/{userId}
+ * [GET] /app/users?token=토큰}
  */
 exports.getUserById = async function (req, res) {
 
     /**
      * Path Variable: userId
      */
+    //const {token} = req.query;
+    
+    //console.log(req.verifiedToken);
     const userId = req.params.userId;
+    //if(req.params.userId) userId = req.params.userId;
+    //else userId = req.verifiedToken.useridx;
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveUser(userId);
@@ -129,23 +134,9 @@ exports.updateUser = async function (req, res) {
     /**
      * Body: email, password, nickname
      */
-    const {nickname, password, age, phone_number, email} = req.body;
+    const {nickname, password} = req.body;
     
     const id = req.params.userId;
-    // // 빈 값 체크
-    // if (!email)
-    //     return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
-
-    // // 길이 체크
-    // if (email.length > 30)
-    //     return res.send(response(baseResponse.SIGNUP_EMAIL_LENGTH));
-
-    // // 형식 체크 (by 정규표현식)
-    // if (!regexEmail.test(email))
-    //     return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-
-    // // 기타 등등 - 추가하기
-
 
     const signUpResponse = await userService.editUser(
         id,

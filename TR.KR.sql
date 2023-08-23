@@ -1,11 +1,11 @@
 ﻿CREATE TABLE `User` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`account`	VARCHAR(255)	NULL,
-	`password`	VARCHAR(255)	NULL,
-	`nickname`	VARCHAR(255)	NULL,
-	`age`	INT	NULL,
-	`phone_number`	VARCHAR(255)	NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`email`	VARCHAR(255)	NULL,
+	`emailVerified`	BOOLEAN	NULL,
+	`password`	VARCHAR(255)	NULL,
+	`name`	VARCHAR(255)	NULL,
+	`nickname`	VARCHAR(255)	NULL,
+	`birth`	DATE	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL,
 	`discord_auth`	VARCHAR(255)	NULL,
@@ -18,8 +18,8 @@
 );
 
 CREATE TABLE `Competition` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`host_id`	VARCHAR(255)	NULL,
+	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`host_id`	INT	NOT NULL,
 	`competition_title`	VARCHAR(50)	NULL,
 	`competition_content`	TEXT	NULL,
 	`event`	VARCHAR(50)	NULL,
@@ -30,110 +30,90 @@ CREATE TABLE `Competition` (
 	`prize`	TEXT	NULL,
 	`pre_date`	TEXT	NULL,
 	`final_date`	TEXT	NULL,
-	`poster_path`	TEXT	NULL
+	`poster_path`	TEXT	NULL,
+	`pdf_path`	TEXT	NULL
 );
 
 CREATE TABLE `Team` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`name`	INT	NULL,
+	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`team_name`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
-	`updated_at`	TIMESTAMP	NULL,
-	`intoduction`	VARCHAR(255)	NULL
+	`updated_at`	TIMESTAMP	NULL
 );
 
 CREATE TABLE `Player` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	`id`	INT	AUTO_INCREMENT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
-	`name`	VARCHAR(255)	NULL,
-	`role`	VARCHAR(255)	NULL,
+	`nickname`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
-	`updaed_at`	TIMESTAMP	NULL
+	`updaed_at`	TIMESTAMP	NULL,
+	`name`	VARCHAR(255)	NULL
 );
 
 CREATE TABLE `Tournament_Node` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	`id`	INT	AUTO_INCREMENT	NOT NULL,
 	`competition_id`	INT	NOT NULL,
 	`round`	INT	NULL,
 	`match_number`	INT	NULL,
 	`team1_id`	INT	NULL,
 	`team2_id`	INT	NULL,
 	`winner_id`	INT	NULL,
-	`is_finished`	Bool	NULL,
+	`is_finished`	BOOLEAN	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL
 );
 
-CREATE TABLE `Team_Match_History` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	`match_id`	INT	NOT NULL,
-	`competition_id`	INT	NOT NULL,
-	`team_id`	INT	NOT NULL,
-	`is_won`	Bool	NULL
-);
+
 
 CREATE TABLE `Team_Competition_History` (
-	`id`	INT	 AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	`id`	INT	AUTO_INCREMENT	NOT NULL,
 	`competition_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
-	`rank`	INT	NULL
+	`id2`	INT	NOT NULL,
+	`ranking`	INT	NULL,
+	`point`	INT	NULL
 );
 
-ALTER TABLE `Player` ADD CONSTRAINT `FK_User_TO_Player_1` FOREIGN KEY (
-	`user_id`
-)
-REFERENCES `User` (
+ALTER TABLE `User` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
 	`id`
 );
 
-ALTER TABLE `Player` ADD CONSTRAINT `FK_Team_TO_Player_1` FOREIGN KEY (
+ALTER TABLE `Competition` ADD CONSTRAINT `PK_COMPETITION` PRIMARY KEY (
+	`id`,
+	`host_id`
+);
+
+ALTER TABLE `Team` ADD CONSTRAINT `PK_TEAM` PRIMARY KEY (
+	`id`
+);
+
+ALTER TABLE `Player` ADD CONSTRAINT `PK_PLAYER` PRIMARY KEY (
+	`id`,
+	`user_id`,
 	`team_id`
-)
-REFERENCES `Team` (
-	`id`
 );
 
-ALTER TABLE `Tournament_Node` ADD CONSTRAINT `FK_Competition_TO_Tournament_Node_1` FOREIGN KEY (
-	`competition_id`
-)
-REFERENCES `Competition` (
-	`id`
-);
-
-ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Tournament_Node_TO_Team_Match_History_1` FOREIGN KEY (
-	`match_id`
-)
-REFERENCES `Tournament_Node` (
-	`id`
-);
-
-ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Tournament_Node_TO_Team_Match_History_2` FOREIGN KEY (
-	`competition_id`
-)
-REFERENCES `Tournament_Node` (
+ALTER TABLE `Tournament_Node` ADD CONSTRAINT `PK_TOURNAMENT_NODE` PRIMARY KEY (
+	`id`,
 	`competition_id`
 );
 
-ALTER TABLE `Team_Match_History` ADD CONSTRAINT `FK_Team_TO_Team_Match_History_1` FOREIGN KEY (
+ALTER TABLE `Team_Match_History` ADD CONSTRAINT `PK_TEAM_MATCH_HISTORY` PRIMARY KEY (
+	`id`,
+	`match_id`,
+	`competition_id`,
 	`team_id`
-)
-REFERENCES `Team` (
-	`id`
 );
 
-ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `FK_Competition_TO_Team_Competition_History_1` FOREIGN KEY (
-	`competition_id`
-)
-REFERENCES `Competition` (
-	`id`
+ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `PK_TEAM_COMPETITION_HISTORY` PRIMARY KEY (
+	`id`,
+	`competition_id`,
+	`team_id`,
+	`id2`
 );
 
-ALTER TABLE `Team_Competition_History` ADD CONSTRAINT `FK_Team_TO_Team_Competition_History_1` FOREIGN KEY (
-	`team_id`
-)
-REFERENCES `Team` (
-	`id`
-);
+
 
 
 INSERT INTO User (account, password, nickname, age, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose)

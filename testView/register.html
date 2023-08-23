@@ -7,19 +7,26 @@
 </head>
 <body>
   <h1>회원 가입</h1>
-  <label for="userId">ID: </label>
+ <!-- <label for="userId">ID: </label>
   <input type="text" id="userId" name="userId">
-  <button id="checkIDButton">ID중복체크</button><br>
+  <button id="checkIDButton">ID중복체크</button><br> 
+ -->
+
+  <label for="inputemail">이메일: </label>
+  <input type="text" id="email" name="email">
+  <button id="checkEmailButton">이메일중복체크</button><br>
+  
   <label for="password">비밀번호: </label>
   <input type="text" id="password" name="password"> /* 디버깅용, password타입 권장*/
   <br>
+
+  <label for="name">이름: </label>
+  <input type="text" id="name" name="name"><br>
   <label for="nickname">닉네임: </label>
   <input type="text" id="nickname" name="nickname">
   <button id="checkNicknameButton">닉네임중복체크</button><br>
   
-  <label for="inputemail">이메일: </label>
-  <input type="text" id="email" name="email">
-  <button id="checkEmailButton">이메일중복체크</button><br>
+ 
 
   <label for="birth">생년월일: </label>
   <input type="date" id="birth" name="birth">
@@ -48,28 +55,28 @@
 
 
       //ID중복 확인
-      const checkIDButton = document.getElementById('checkIDButton');
-      const IDBox = document.getElementById('userId');
-      checkIDButton.addEventListener('click', ()=>{
-        account = IDBox.value;
+      // const checkIDButton = document.getElementById('checkIDButton');
+      // const IDBox = document.getElementById('userId');
+      // checkIDButton.addEventListener('click', ()=>{
+      //   account = IDBox.value;
         
-        const requestData = { account : account};
+      //   const requestData = { account : account};
 
-        fetch(`http://localhost:3000/api/signup/accountCheck`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        })
-          .then(response => response.json())
-          .then(data => {
-            alert(data.message);
-            console.log(data);
-            if(data.isSuccess === true)  IDBox.disabled = true;
-          })
-          .catch(error => console.error('Error:', error));
-      });
+      //   fetch(`http://localhost:3000/api/signup/accountCheck`, {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify(requestData)
+      //   })
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       alert(data.message);
+      //       console.log(data);
+      //       if(data.isSuccess === true)  IDBox.disabled = true;
+      //     })
+      //     .catch(error => console.error('Error:', error));
+      // });
 
 
 
@@ -129,15 +136,17 @@
       //회원가입
       const registerButton = document.getElementById('register');
       registerButton.addEventListener('click', ()=>{
-        account = document.getElementById('userId').value;
+        //account = document.getElementById('userId').value;
         password = document.getElementById('password').value;
         nickname = document.getElementById('nickname').value;
+        name = document.getElementById('name').value;
         email = document.getElementById('email').value;
         birth = document.getElementById('birth').value;
         const requestData = {
-           account : account,
+          // account : account,
            password : password,
            nickname : nickname,
+           name : name,
            email : email,
            birth : birth
           };
@@ -153,21 +162,21 @@
           .then(data => {//회원가입 성공시
             alert(data.message);
 
-            if(data.isSuccess === true) 
-            fetch(`http://localhost:3000/api/verification/send-verification-email`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({email : email})
-            })
-              .then(response => response.json())
-              .then(data => {
-                alert(data.message);
-                console.log(data);
-                if(data.isSuccess === true)  EmailBox.disabled = true;
-              })
-              .catch(error => console.error('Error:', error));
+            // if(data.isSuccess === true) 
+            // fetch(`http://localhost:3000/api/verification/send-verification-email`, {
+            //   method: 'POST',
+            //   headers: {
+            //     'Content-Type': 'application/json'
+            //   },
+            //   body: JSON.stringify({email : email})
+            // })
+            //   .then(response => response.json())
+            //   .then(data => {
+            //     alert(data.message);
+            //     console.log(data);
+            //     if(data.isSuccess === true)  EmailBox.disabled = true;
+            //   })
+            //   .catch(error => console.error('Error:', error));
             //이메일인
 
             //redirection('./');
