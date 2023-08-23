@@ -131,7 +131,7 @@ exports.getPlayListById = async function (req, res) {
     for (const competitionId of CompetitionIds) {
         const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
 
-        playList.push({...result[0],ranking : competitionId.ranking});
+        playList.push({...result[0],grade: competitionId.grade});
 
     }
 
@@ -152,7 +152,7 @@ exports.getPlayListByToken = async function (req, res) {
     const playList = [];
     for (const competitionId of CompetitionIds) {
         const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
-        playList.push({...result[0],ranking : competitionId.ranking});
+        playList.push({...result[0],grade : competitionId.grade});
 
     }
 
