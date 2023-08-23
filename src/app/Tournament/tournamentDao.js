@@ -59,9 +59,10 @@ async function createTournamentBracket(connection, competitionId) {
 // 대진표 등록된 팀들 반환
 async function getTournamentEntryTeam(connection, competitionId) {
   const getTournamentTeamNameQuery = `
-         SELECT t.team_name, tch.*
+         SELECT t.team_name, tch.*, tn.*
          FROM Team_Competition_History tch
          JOIN Team t ON tch.team_id = t.id
+         LEFT JOIN Tournament_Node tn ON tn.competition_id = tch.competition_id
          WHERE tch.competition_id = ?;
          `;
   const [getTournamentTeamNameRows] = await connection.query(getTournamentTeamNameQuery, [competitionId]);
