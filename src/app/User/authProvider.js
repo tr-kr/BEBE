@@ -2,13 +2,39 @@ const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
 
 const authDao = require("./authDao");
-
-exports.getPwd = async function (account, password) {
+//로그인light
+exports.getPwd = async function (email, password) {
   const connection = await pool.getConnection(async (conn) => conn);
-  const pwdCheckResult = await authDao.getPwd(connection, account, password);
+  const pwdCheckResult = await authDao.getPwd(connection, email, password);
   connection.release();
 
   return pwdCheckResult;
+};
+
+/*로그아웃light
+exports.logout = async function (useridx) {
+  const blacklistedTokens = new Set(); // 무효화된 토큰을 저장하는 Set
+
+  exports.invalidateToken = function (token) {
+    blacklistedTokens.blacklisted;
+
+    add(token); // 토큰을 무효화 목록에 추가
+  };
+
+  exports.isTokenBlacklisted = function (token) {
+    return blacklistedTokens.has(token); // 토큰이 무효화 목록에 있는지 확인
+  };
+
+  exports.logout = async function (useridx) {
+    // JWT를 사용하는 경우, 사용자의 토큰을 무효화 목록에 추가하여 무효화
+    const invalidatedTokens = getTokensForUser(useridx); // 여기서 로직을 대체해주세요
+
+    invalidatedTokens.forEach((token) => {
+      invalidate;
+      invalidateToken(token); // invalidateToken을 호출하여 토큰을 무효화 목록에 추가
+    });
+  };
+  return { message: "Logged out successfully" };
 };
 
 /* Provider: Read 비즈니스 로직 처리

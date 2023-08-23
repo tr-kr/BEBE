@@ -14,14 +14,13 @@ const crypto = require("crypto");
 const { connect } = require("http2");
 
 //로그인 light
-const SHA512 = require("sha512"); // SHA256 해시 함수 라이브러리 사용
-//const jwtService = require("./jwtService"); // jwtService 모듈의 경로에 따라 수정
+//const SHA512 = require("sha512"); // SHA256 해시 함수 라이브러리 사용
 
-exports.login = async function (account, password) {
+exports.login = async function (email, password) {
   //async login(postLoginReq) {
 
   try {
-    const users = await authProvider.getPwd(account, password); // 비밀번호
+    const users = await authProvider.getPwd(email, password); // 비밀번호
     if (users.length === 0) return errResponse(baseResponse.SIGNIN_EMAIL_WRONG);
     const user = users[0];
     console.log(user);
@@ -46,7 +45,6 @@ exports.login = async function (account, password) {
         jwt: token,
       };
     } else {
-      //throw new Error("FAILED_TO_LOGIN");
       return response(baseResponse.SIGNIN_PASSWORD_WRONG);
     }
   } catch (error) {
@@ -54,59 +52,34 @@ exports.login = async function (account, password) {
     logger.error(error);
     throw error; // 처리된 예외 다시 던지기
   }
-  // }
 };
-// class AuthService {
-//   constructor(authDao, authProvider, jwtService) {
-//     this.authDao = authDao;
-//     this.authProvider = authProvider;
-//     this.jwtService = jwtService;
-//   }
+
+/*로그아웃 light
+exports.logout = async function (useridx) {
+  try {
+    const logoutResult = await authProvider.logout(userIdx);
+    return {
+      isSuccess: true,
+      message: "logout successfully.",
+    };
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
+
+/*로그인 인가 light
+exports.isAuthorizedToLogin = async function (useridx) {
+  try {
+    const isAuthorized = true;
+    return isAuthorized;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
 
 // }
-
-// module.exports = AuthService;
-
-/*로그인 light : JWT토큰 발급, 최초 로그인 했을 때 accessToken 과 refreshToken 발급해주는 부분
-require("dotenv").config();
-
-const token = () => {
-  return{
-    access(id){
-      return jwt.sign({id}, process.env.ACCESS_TOEKN_SECRET, {
-        expiresIn: "15m",
-      });
-    },
-    refresh(id){
-      return jwt.sign({id}, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "180 days",
-      });
-    }
-  }
-}
-
-exports.userLogin = (req, res) =>{
-  res.send('userLogin');
-}
-
-exports. authenticate =  (req, res, next) => {
-  if(req.query.id == 'hello'){ //id가 일치할 때
-    req.authData = {
-      status : 200,
-      message : 'Correct User Data',
-      jwt:{
-        accesToken : token().access(req.query.id),
-        refreshToken : token().refresh(req.query.id)
-      }
-    };
-  }else{
-    req.authData = {
-      status : 400,
-      message : 'Not Correct User Data'
-    };
-  }
-  next();
-}*/
 
 //////////////////////////////////////////////
 /* Service: Create, Update, Delete 비즈니스 로직 처리

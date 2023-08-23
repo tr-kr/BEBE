@@ -1,12 +1,11 @@
-//로그인 light
-// 패스워드 체크
-async function getPwd(connection, account, password) {
+//로그인 light, 패스워드 체크
+async function getPwd(connection, email, password) {
   const getPwdQuery = `SELECT id, account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
                             FROM User 
-                            WHERE account = ?
+                            WHERE email = ?
                             `;
 
-  const [selectUserPasswordRow] = await connection.query(getPwdQuery, account);
+  const [selectUserPasswordRow] = await connection.query(getPwdQuery, email);
   return selectUserPasswordRow;
 }
 
@@ -34,17 +33,6 @@ async function getPwd(connection, account, password) {
 //     }
 //   }
 // }
-
-//로그인light
-async function selectUserId(connection, userId) {
-  const selectUserIdQuery = `
-                 SELECT account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose 
-                 FROM User 
-                 WHERE id = ?;
-                 `;
-  const [userRow] = await connection.query(selectUserIdQuery, userId);
-  return userRow;
-}
 
 //////////////////////////////////////////////모든 유저 조회
 async function selectUser(connection) {
@@ -141,7 +129,7 @@ async function updateUserInfo(connection, id, nickname) {
 module.exports = {
   selectUser,
   selectUserEmail,
-  selectUserId,
+  //selectUserId,
   insertUserInfo,
   selectUserPassword,
   selectUserAccount,
