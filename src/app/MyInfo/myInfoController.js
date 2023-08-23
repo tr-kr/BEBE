@@ -113,9 +113,11 @@ exports.getPlayListById = async function (req, res) {
     const playList = [];
     for (const competitionId of CompetitionIds) {
         const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
-        playList.push(result);
+       // console.log(result[0]);
+        playList.push({...result[0],ranking : competitionId.ranking});
+    //    playList.push();
     }
-
+    console.log(playList[1]);
     return res.send(response(baseResponse.SUCCESS, playList));
 
     return res.send(response(baseResponse.SUCCESS, CompetitionIds));
