@@ -19,14 +19,14 @@ async function getCompetitionById(connection, id) {
   const [competitionEntryTeamRows] = await connection.query(getCompetitionIdQuery, num);
   return competitionEntryTeamRows;
 }
-
+// competition_title, competition_content, event, qualification, prize, poster_path, pdf_path, recruit_period, competition_period, format, scale
 // 대회 등록
 async function createCompetition(connection, createCompetitionParams) {
   // host_id는 로그인 기능 구현 후 추가하기
   const createCompetitionQuery = `
-         INSERT INTO Competition (competition_title, competition_content, event, dead_date, qualification, 
-         prize, pre_date, final_date, poster_path, pdf_path,  created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+         INSERT INTO Competition (competition_title, competition_content, event, qualification,
+          prize, poster_path, pdf_path, recruit_period, competition_period, format, scale,  created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
          `;
   const [competitionEntryTeamRows] = await connection.query(createCompetitionQuery, createCompetitionParams);
   // console.log('idrow : ',idRows);
@@ -38,8 +38,8 @@ async function createCompetition(connection, createCompetitionParams) {
 async function updateCompetition(connection, competitionId, updateCompetitionParams) {
   const updateCompetitionQuery = `
         UPDATE Competition 
-        SET competition_title = ?, competition_content = ?, event = ?, dead_date = ?, qualification = ?, prize = ?,
-        pre_date = ?, final_date = ?, poster_path = ?, pdf_path = ?, updated_at = CURRENT_TIMESTAMP
+        SET competition_title = ?, competition_content = ?, event = ?, qualification = ?, prize = ?,
+        poster_path = ?, pdf_path = ?, recruit_period = ?, competition_period = ?, format = ?, scale = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?;
         `;
   updateCompetitionParams.push(competitionId)

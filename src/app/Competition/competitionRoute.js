@@ -97,24 +97,25 @@ app.get('/api/competition', competition.getCompetition);
  *       event:
  *         type: string
  *         description: 대회 이벤트
- *       dead_date:
- *         type: string
- *         format: date
- *         description: 응모 마감일
  *       qualification:
  *         type: string
  *         description: 응모 자격
  *       prize:
  *         type: string
  *         description: 상금 정보
- *       pre_date:
+ *       recruit_period:
  *         type: string
- *         format: date
- *         description: 예선 일자
- *       final_date:
+ *         description: 모집 기간
+ *       competition_period:
  *         type: string
- *         format: date
- *         description: 본선 일자
+ *         description: 대회 기간
+ *       format:
+ *         type: string
+ *         description: 대회 형식
+ *       scale:
+ *         type: string
+ *         description: 대회 참여 팀 수
+ * 
  *       photo:
  *         type: array
  *         items:
@@ -168,16 +169,24 @@ app.get('/api/competition', competition.getCompetition);
  *         description: 상금 정보
  *         required: true
  *       - in: formData
- *         name: pre_date
+ *         name: recruit_period
  *         type: string
- *         format: date
- *         description: 예선 일자
+ *         description: 모집 기간
  *         required: true
  *       - in: formData
- *         name: final_date
+ *         name: competition_period
  *         type: string
- *         format: date
- *         description: 본선 일자
+ *         description: 대회 기간
+ *         required: true
+ *       - in: formData
+ *         name: format
+ *         type: string
+ *         description: 대회 형식
+ *         required: true
+ *       - in: formData
+ *         name: scale
+ *         type: string
+ *         description: 대회 참여 팀 수
  *         required: true
  *       - in: formData
  *         name: photo
@@ -245,16 +254,24 @@ app.get('/api/competition', competition.getCompetition);
  *         description: 상금 정보
  *         required: true
  *       - in: formData
- *         name: pre_date
+ *         name: recruit_period
  *         type: string
- *         format: date
- *         description: 예선 일자
+ *         description: 모집 기간
  *         required: true
  *       - in: formData
- *         name: final_date
+ *         name: competition_period
  *         type: string
- *         format: date
- *         description: 본선 일자
+ *         description: 대회 기간
+ *         required: true
+ *       - in: formData
+ *         name: format
+ *         type: string
+ *         description: 대회 형식
+ *         required: true
+ *       - in: formData
+ *         name: scale
+ *         type: string
+ *         description: 대회 참여 팀 수
  *         required: true
  *       - in: formData
  *         name: photo
