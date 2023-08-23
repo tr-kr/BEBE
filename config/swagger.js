@@ -15,7 +15,13 @@ const options = {
       },
     ],
   },
-  apis: ["./src/app/MyInfo/*.js", "./src/app/Auth_test/*.js", "./src/app/Competition/*.js", "./src/app/Tournament/*.js"]
+  apis: [
+    "./src/app/User/*.js",
+    "./src/app/MyInfo/*.js",
+    "./src/app/Auth_test/*.js",
+    "./src/app/Competition/*.js",
+    "./src/app/Tournament/*.js",
+  ],
 };
 const specs = swaggerJsdoc(options);
 
