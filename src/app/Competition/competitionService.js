@@ -21,12 +21,12 @@ const unlinkPromise = util.promisify(fs.unlink); // Promisify fs.unlink for easi
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 // 대회 create
-exports.createCompetition = async function (competition_title, competition_content, event, dead_date, qualification,
-    prize, pre_date, final_date, poster_path, pdf_path) {
+exports.createCompetition = async function (competition_title, competition_content, event, qualification,
+    prize, poster_path, pdf_path, recruit_period, competition_period, format, scale) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const createCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path, pdf_path]
+        const createCompetitionParams = [competition_title, competition_content, event, qualification,
+            prize, poster_path, pdf_path, recruit_period, competition_period, format, scale]
         const createCompetitionResult = await competitionDao.createCompetition(connection, createCompetitionParams);
         console.log(`추가된 경기 id : ${createCompetitionResult.insertId}`)
         connection.release();
@@ -38,12 +38,12 @@ exports.createCompetition = async function (competition_title, competition_conte
 }
 
 // 대회 update
-exports.updateCompetition = async function (competitionId, competition_title, competition_content, event, dead_date, qualification,
-    prize, pre_date, final_date, poster_path) {
+exports.updateCompetition = async function (competitionId, competition_title, competition_content, event, qualification,
+    prize, poster_path, pdf_path, recruit_period, competition_period, format, scale) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const updateCompetitionParams = [competition_title, competition_content, event, dead_date, qualification,
-            prize, pre_date, final_date, poster_path, pdf_path]
+        const updateCompetitionParams = [competition_title, competition_content, event, qualification,
+            prize, poster_path, pdf_path, recruit_period, competition_period, format, scale]
         const updateCompetitionResult = await competitionDao.updateCompetition(connection, competitionId, updateCompetitionParams);
         console.log(`수정된 경기 id : ${updateCompetitionResult.insertId}`)
         connection.release();

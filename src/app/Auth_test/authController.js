@@ -163,14 +163,18 @@ exports.verify = async function(req, res){
       const decoded = jwt.verify(token, secretKey);
       console.log(decoded.email);
       
-      verifyEmail({id : decoded.id})
-      .then(result =>{
-        //console.log('qqq' + result);
-      })
-      .catch(err =>{
-        //console.log('zz' + err);
-      })
+      // verifyEmail({id : decoded.id})
+      // .then(result =>{
+      //   //console.log('qqq' + result);
+      // })
+      // .catch(err =>{
+      //   //console.log('zz' + err);
+      // })
 
+      const {id, email} = decoded;
+
+      //console.log('컨트롤러,', email);
+      const verifyResponse = await userService.verifyEmail(id);
       //console.log(verifyREsult);
       // 토큰 유효한 경우
       // 본인 확인 완료 처리 후 클라이언트에게 키 전송 등의 작업 수행
