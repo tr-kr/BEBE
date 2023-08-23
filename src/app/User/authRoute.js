@@ -64,6 +64,7 @@ module.exports = function (app) {
    * /api/deleteuser?token={token}:
    *   get:
    *     summary: 회원탈퇴
+   *     tags: [로그인]
    *     description: Use this API to delete the authenticated user's account.
    *     security:
    *       - jwtToken: []
