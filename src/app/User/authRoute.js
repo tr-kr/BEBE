@@ -8,7 +8,7 @@ module.exports = function (app) {
   //app.get("/api/verify-token", jwtMiddleware, auth.verifyToken);
 
   //회원탈퇴 light
-  app.get("/api/deleteuser/", jwtMiddleware, auth.deleteuser);
+  //app.get("/api/deleteuser/", jwtMiddleware, auth.deleteuser);
   /**
    * @swagger
    * /api/login:
@@ -58,6 +58,26 @@ module.exports = function (app) {
    *                   type: string
    */
   app.post("/api/login", auth.login);
+
+  /**
+   * @swagger
+   * /api/deleteuser?token={token}:
+   *   delete:
+   *     summary: 회원탈퇴
+   *     description: Use this API to delete the authenticated user's account.
+   *     security:
+   *       - jwtToken: []
+   *     responses:
+   *       200:
+   *         description: User account successfully deleted
+   *       400:
+   *         description: Bad request or validation error
+   *       401:
+   *         description: Unauthorized - Invalid or missing token
+   *       500:
+   *         description: Internal server error
+   */
+  app.get("/api/deleteuser", jwtMiddleware, auth.deleteuser);
 };
 
 /* 0. 테스트 API
