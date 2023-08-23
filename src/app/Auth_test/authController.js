@@ -467,7 +467,7 @@ const REDIRECT_URI = 'http://localhost:3000/api/auth/discord/callback';
 
 exports.tryDiscord = async function(req, res){
   //await axios.get(`https://discord.com/api/v10/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
-
+  const id = req.params.id;
   res.redirect(`https://discord.com/api/v10/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`);
 }
 
@@ -494,11 +494,14 @@ exports.callbackDiscord = async function(req, res){
     });
 
     const user = userResponse.data;
+
     //console.log(user);
     
-    return user.username;
+    //return user.username;
     //const discord = user.usernmae + user.discriminator;
+    //res.redirect('/api/auth/discord/update');
 
+    res.send(response(baseResponseStatus.SUCCESS,`${user.username}#${user.discriminator}`));
     //await userService.verifyDiscord(id, discord);
 
   }catch(err){

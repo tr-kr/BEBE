@@ -146,12 +146,16 @@
 
 
       //디스코드 인증
+     
       authDiscordButton.addEventListener('click', () => {
-        const discordBox = document.getElementById('discord');
-        const discordWindow = window.open('http://localhost:3000/api/auth/discord', 'discord Window', 'width=600,height=800');
+        let discordWindow = window.open('http://localhost:3000/api/auth/discord', 'discord Window', 'width=600,height=800');
         
-        
+        discordWindow.addEventListener('unload', function(){
+        console.log('zzzz',discordWindow.document.body);
+      })
       });
+
+     
 
 
 
@@ -287,9 +291,6 @@
           alert('회원 정보 수정에 실패했습니다.');
         });
       });
-
-
-
 
 
       //패스워드 변경

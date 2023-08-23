@@ -96,7 +96,7 @@ exports.postSignIn = async function (email, password) {
     }
 };
 
-exports.editUser = async function (id, nickname, password, age, phone_number, email) {
+exports.editUser = async function (id, nickname, password) {
     let hashedPassword = null;
     if(password != null){
         hashedPassword = await crypto
