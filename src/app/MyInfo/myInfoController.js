@@ -190,7 +190,7 @@ exports.getHostListByToken = async function (req, res) {
      */
 
     const userId = req.verifiedToken.useridx;
-
+    console.log(userId);
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const CompetitionIds = await userProvider.retrieveHostList(userId);
     console.log('[개최한 대회 조회]',userId);
