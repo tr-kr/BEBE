@@ -113,7 +113,15 @@ exports.deleteCompetition = async function (req, res) {
  * [POST] /api/competition/entry/:competitionId
  */
 exports.entryCompetitionTeam = async function (req,res) {
-    const {team_name, leader_nickname, member1_nickname, member2_nickname, member3_nickname, member4_nickname} = req.body;
+    const {
+        team_name,
+        leader_nickname,
+        member1_nickname = null,
+        member2_nickname = null,
+        member3_nickname = null,
+        member4_nickname = null
+      } = req.body;
+
     competitionId = req.params.competitionId;
     
     entryCompetitionParams = [team_name, leader_nickname, member1_nickname, member2_nickname, member3_nickname, member4_nickname];

@@ -340,7 +340,7 @@ app.get('/api/competition', competition.getCompetition);
  *         name: member1_nickname
  *         type: string
  *         description: 팀 멤버 1 닉네임
- *         required: true
+ *         required: false
  *       - in: formData
  *         name: member2_nickname
  *         type: string
