@@ -33,7 +33,7 @@ async function selectUserId(connection, userId) {
 // userId로 참가했던 대회들 불러오기
 async function selectPlayList(connection, userId) {
   const selectPlayList = `
-                 SELECT competition_id, ranking
+                 SELECT competition_id, grade
                  FROM Team_Competition_History
                  WHERE team_id IN (SELECT team_id
                   FROM Player
