@@ -18,31 +18,32 @@
 );
 
 CREATE TABLE `Competition` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`host_id`	INT	NOT NULL,
 	`competition_title`	VARCHAR(50)	NULL,
 	`competition_content`	TEXT	NULL,
 	`event`	VARCHAR(50)	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL,
-	`dead_date`	TIMESTAMP	NULL,
 	`qualification`	TEXT	NULL,
 	`prize`	TEXT	NULL,
-	`pre_date`	TEXT	NULL,
-	`final_date`	TEXT	NULL,
 	`poster_path`	TEXT	NULL,
-	`pdf_path`	TEXT	NULL
+	`pdf_path`	TEXT	NULL,
+	`recruit_period`	VARCHAR(255)	NULL,
+	`competition_period`	VARCHAR(255)	NULL,
+	`format`	VARCHAR(255)	NULL,
+	`scale`	VARCHAR(255)	NULL
 );
 
 CREATE TABLE `Team` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`team_name`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updated_at`	TIMESTAMP	NULL
 );
 
 CREATE TABLE `Player` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
 	`nickname`	VARCHAR(255)	NULL,
@@ -52,7 +53,7 @@ CREATE TABLE `Player` (
 );
 
 CREATE TABLE `Tournament_Node` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`competition_id`	INT	NOT NULL,
 	`round`	INT	NULL,
 	`match_number`	INT	NULL,
@@ -64,15 +65,15 @@ CREATE TABLE `Tournament_Node` (
 	`updated_at`	TIMESTAMP	NULL
 );
 
-
-
 CREATE TABLE `Team_Competition_History` (
-	`id`	INT	AUTO_INCREMENT	NOT NULL,
+	`id`	INT	AUTO_INCREMENT NOT NULL,
+	`id2`	INT	NOT NULL,
 	`competition_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
-	`id2`	INT	NOT NULL,
 	`ranking`	INT	NULL,
-	`point`	INT	NULL
+	`point`	INT	NULL,
+	`created_at`	TIMESTAMP	NULL,
+	`updated_at`	TIMESTAMP	NULL
 );
 
 ALTER TABLE `User` ADD CONSTRAINT `PK_USER` PRIMARY KEY (
