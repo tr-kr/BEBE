@@ -4,7 +4,76 @@ module.exports = function(app){
     const user = require('./authController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
+/**
+ * @swagger
+ * tags:
+ *   name: 회원가입
+ *   description: 회원가입과 관련된 API
+ * 
+ * /api/verification/send-verification-email:
+ *   post:
+*     tags:
+ *       - 회원가입
+ *     summary: 회원 가입 인증 이메일 전송
+ *     description: 사용자의 이메일로 회원 가입 인증 이메일을 전송합니다.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               email:
+ *                 type: string
+ *             example:
+ *               id: 1
+ *               email: example@example.com
+ *     responses:
+ *       200:
+ *         description: 회원 가입 인증 이메일 전송 성공 후 성공 메시지가 포함된 응답입니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: 요청 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
     app.post('/api/verification/send-verification-email', user.send_verification_email);
+ 
+ 
+ 
+ /**
+ * @swagger
+ * /api/verification/verify:
+ *   get:
+ *     tags:
+ *       - 회원가입
+ *     summary: 이메일 본인 확인
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: 이메일 본인 확인을 위한 토큰
+ *     responses:
+ *       200:
+ *         description: 본인 확인 완료 메시지
+ *       400:
+ *         description: 유효하지 않은 토큰 메시지
+ */
     app.get('/api/verification/verify', user.verify);
 ///////////////////////////////////////////////////////////////////////
 
@@ -126,17 +195,8 @@ module.exports = function(app){
  */
     app.post('/api/signup', user.register);
     
-    // 2. 유저 조회 API (+ 검색)
- //   app.get('/app/users',user.getUsers); 
 
 
-
-    // TODO: After 로그인 인증 방법 (JWT)
-    // 로그인 하기 API (JWT 생성)
-    app.post('/app/login', user.login);
-
-    // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
-    app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers);
 ////////////////////////////////////////////////////////////////
     //작성자 : 류지원
     //디스코드 인증 API

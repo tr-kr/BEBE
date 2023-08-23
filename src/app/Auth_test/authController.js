@@ -92,7 +92,7 @@ exports.register = async function (req, res) {
       const headers = {
         'Content-Type': 'application/json'
       }
-      const sendEmailResponse = await axios.post('http://localhost:3000/api/verification/send-verification-email',data, {headers});
+      const sendEmailResponse = await axios.post('http://172.30.1.99:3000/api/verification/send-verification-email',data, {headers});
       //return res.send({sendEmailResponse});
       if(sendEmailResponse.isSuccess === false)
         return sendEmailResponse;
@@ -123,7 +123,7 @@ const transporter = nodemailer.createTransport({
     // 이메일 내용 템플릿 생성
     const emailContent = `
       <p>본인 확인을 위해 아래 링크를 클릭하세요:</p>
-      http://localhost:3000/api/verification/verify?token=${token}
+      http://172.30.1.99:3000/api/verification/verify?token=${token}
     `;
     const mailOptions = {
       from: 'trkrmanager@gmail.com',

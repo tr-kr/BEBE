@@ -82,7 +82,7 @@ exports.getUsers = async function (req, res) {
  * [GET] /app/users?token=토큰}
  */
 exports.getUserById = async function (req, res) {
-
+    console.log(req.query);
     /**
      * Path Variable: userId
      */
@@ -90,6 +90,23 @@ exports.getUserById = async function (req, res) {
     
     //console.log(req.verifiedToken);
     const userId = req.params.userId;
+    //if(req.params.userId) userId = req.params.userId;
+    //else userId = req.verifiedToken.useridx;
+
+    if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const userByUserId = await userProvider.retrieveUser(userId);
+    console.log('[유저 조회]',userId);
+    return res.send(response(baseResponse.SUCCESS, userByUserId));
+};
+
+exports.getUserByToken = async function (req, res) {
+
+
+    //const {token} = req.query;
+    
+    //console.log(req.verifiedToken);
+    const userId = req.verifiedToken.useridx;
+    //console.log(userId);
     //if(req.params.userId) userId = req.params.userId;
     //else userId = req.verifiedToken.useridx;
 
@@ -119,9 +136,30 @@ exports.getPlayListById = async function (req, res) {
     }
     console.log(playList[1]);
     return res.send(response(baseResponse.SUCCESS, playList));
-
-    return res.send(response(baseResponse.SUCCESS, CompetitionIds));
 };
+
+exports.getPlayListByToken = async function (req, res) {
+
+    /**
+     * Path Variable: userId
+     */
+    const userId = req.verifiedToken.useridx;
+
+    if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const CompetitionIds = await userProvider.retrievePlayList(userId);
+    console.log('[참여한 대회 조회]',userId);
+
+    const playList = [];
+    for (const competitionId of CompetitionIds) {
+        const result = await competitionProvider.retrieveCompetitionList(competitionId.competition_id);
+       // console.log(result[0]);
+        playList.push({...result[0],ranking : competitionId.ranking});
+    //    playList.push();
+    }
+    console.log(playList[1]);
+    return res.send(response(baseResponse.SUCCESS, playList));
+};
+
 
 exports.getHostListById = async function (req, res) {
 
@@ -130,6 +168,20 @@ exports.getHostListById = async function (req, res) {
      */
     const userId = req.params.userId;
 
+    if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
+    const userByUserId = await userProvider.retrieveHostList(userId);
+    console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
+    return res.send(response(baseResponse.SUCCESS, userByUserId));
+};
+
+exports.getHostListByToken = async function (req, res) {
+
+    /**
+     * Path Variable: userId
+     */
+
+    const userId = req.verifiedToken.useridx;
+    
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const userByUserId = await userProvider.retrieveHostList(userId);
     console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
@@ -161,7 +213,29 @@ exports.updateUser = async function (req, res) {
 };
 
 
+/**
+ * API No. 
+ * API Name : 특정 유저 정보 수정 API
+ * [GET] /app/user/myInfo?token=
+ */
+exports.updateUserByToken = async function (req, res) {
 
+    /**
+     * Body: email, password, nickname
+     */
+    const {nickname, password} = req.body;
+    
+    const id = req.verifiedToken.useridx;
+
+    
+    const signUpResponse = await userService.editUser(
+        id,
+        nickname,
+        password,
+    );
+
+    return res.send(signUpResponse);
+};
 
 
 
