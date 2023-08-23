@@ -193,7 +193,7 @@ exports.getHostListByToken = async function (req, res) {
 
     if (!userId) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
     const CompetitionIds = await userProvider.retrieveHostList(userId);
-    console.log('[개최한 대회 조회]',userId, userByUserId.nickname);
+    console.log('[개최한 대회 조회]',userId);
     
     const hostList = [];
     for (const competitionId of CompetitionIds) {
