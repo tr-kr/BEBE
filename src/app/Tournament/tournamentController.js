@@ -85,4 +85,15 @@ exports.getTournamentRanking = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, getTournamentRankingResponse));
 }
 
+/*
+ * API No. 7
+ * API Name : 토너먼트 대진표 초기화
+ * [GET] /api/tournament/:competitionId/ranking  
+ */
+exports.resetTournamentBracket = async function (req,res) {
+    const competitionId = req.params.competitionId;
 
+    const resetTournamentBracketResponse = await tournamentService.resetTournamentBracket(competitionId);
+    return res.send(response(baseResponse.SUCCESS,resetTournamentBracketResponse));
+
+}

@@ -178,4 +178,24 @@ module.exports = function (app) {
  *         description: 서버 오류
  */
     app.get('/api/tournament/:competitionId/getRanking', tournament.getTournamentRanking);
+/**
+ * @swagger
+ * /api/tournament/{competitionId}/reset:
+ *   post:
+ *     summary: 토너먼트 대진표 초기화
+ *     tags: [대진표]
+ *     parameters:
+ *       - in: path
+ *         name: competitionId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 초기화할 대회의 ID
+ *     responses:
+ *       200:
+ *         description: 토너먼트 대진표 초기화 성공
+ *       500:
+ *         description: 서버 오류
+ */
+    app.post('/api/tournament/:competitionId/reset', tournament.resetTournamentBracket);
 };

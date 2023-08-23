@@ -68,3 +68,17 @@ exports.saveTournamentResult = async function (competitionId) {
 
 }
 
+exports.resetTournamentBracket = async function (competitionId){
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const resetTournamentBracketResult = await tournamentDao.resetTournamentBracket(connection, competitionId);
+
+        connection.release();
+        return response(baseResponse.SUCCESS);
+    }
+    catch (err) {
+        logger.error(`App - saveTournamentResult Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+
+}

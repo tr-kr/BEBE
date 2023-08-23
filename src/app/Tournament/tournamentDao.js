@@ -165,12 +165,24 @@ async function getTournamentRanking(connection, competitionId){
   return getTournamentRankingRows;
 }
 
+// competition_id 로 대진표 초기화
+async function resetTournamentBracket(connection, competitionId){
+  const resetTournamentBracketQuery = `
+         DELETE FROM Tournament_Node 
+         WHERE competition_id = ?;
+  `;
+  const [resetTournamentBracketRows] = await connection.query(resetTournamentBracketQuery, [competitionId]);
+  return resetTournamentBracketRows;
+
+}
+
 module.exports = {
   createTournamentBracket,
   getTournamentEntryTeam,
   recordWinner,
   saveTournamentResult,
   getTournamentTeamName,
-  getTournamentRanking
+  getTournamentRanking,
+  resetTournamentBracket
 };
 
