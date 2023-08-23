@@ -5,7 +5,10 @@ module.exports = function (app) {
   //로그인,로그아웃,회원가입,로그인 인가 light
   //app.post("/api/login", auth.login);
   //app.get("/api/logout", auth.logout);
-  //app.get("/api/verify-token", auth.verifyToken);
+  //app.get("/api/verify-token", jwtMiddleware, auth.verifyToken);
+
+  //회원탈퇴 light
+  app.get("/api/deleteuser/", jwtMiddleware, auth.deleteuser);
   /**
    * @swagger
    * /api/login:

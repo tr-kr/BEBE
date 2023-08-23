@@ -11,6 +11,17 @@ exports.getPwd = async function (email, password) {
   return pwdCheckResult;
 };
 
+//회원탈퇴light
+exports.deleteuser = async function (useridx) {
+  try {
+    const deleteuserResult = await authProvider.deleteuser(useridx);
+    return deleteuserResult;
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+};
+
 /*로그아웃light
 exports.logout = async function (useridx) {
   const blacklistedTokens = new Set(); // 무효화된 토큰을 저장하는 Set

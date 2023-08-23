@@ -1,3 +1,5 @@
+const { USER_USERID_NOT_EXIST } = require("../../../config/baseResponseStatus");
+
 //로그인 light, 패스워드 체크
 async function getPwd(connection, email, password) {
   const getPwdQuery = `SELECT id, nickname,password,email,emailVerified, name, birth, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
@@ -9,7 +11,34 @@ async function getPwd(connection, email, password) {
   return selectUserPasswordRow;
 }
 
-/*`id`	INT	AUTO_INCREMENT NOT NULL,
+//회원탈퇴light
+async function deleteuser(connection, useridx) {
+  // console.log;
+  const deleteuserQuery = `DELETE FROM User 
+  WHERE id = ?
+  `;
+
+  const [deleteResult] = await connection.query(deleteuserQuery, useridx);
+  return deleteResult;
+}
+
+module.exports = {
+  selectUser,
+  selectUserEmail,
+  //selectUserId,
+  insertUserInfo,
+  selectUserPassword,
+  selectUserAccount,
+  updateUserInfo,
+  selectProduct,
+  selectProductId,
+  //getUserData,
+  getPwd,
+  deleteuser,
+};
+
+/*TR.KR sql
+`id`	INT	AUTO_INCREMENT NOT NULL,
 `email`	VARCHAR(255)	NULL,
 `emailVerified`	BOOLEAN	NULL,
 `password`	VARCHAR(255)	NULL,
@@ -25,30 +54,6 @@ async function getPwd(connection, email, password) {
 `played_match`	INT	NULL,
 `win`	INT	NULL,
 `lose`*/
-// class AuthDao {
-//   async getPwd(postLoginReq) {
-//     const getPwdParams = [postLoginReq.getEmail()];
-
-//     try {
-//       const result = await pool.query(getPwdQuery, getPwdParams);
-//       const userRow = result.rows[0];
-//       if (!userRow) {
-//         throw new Error("User not found");
-//       }
-
-//       return {
-//         useridx: userRow.useridx,
-//         name: userRow.name,
-//         nickName: userRow.nickname,
-//         phone: userRow.phone,
-//         email: userRow.email,
-//         pwd: userRow.pwd,
-//       };
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// }
 
 //////////////////////////////////////////////모든 유저 조회
 async function selectUser(connection) {
@@ -141,17 +146,3 @@ async function updateUserInfo(connection, id, nickname) {
   const updateUserRow = await connection.query(updateUserQuery, [nickname, id]);
   return updateUserRow[0];
 }
-
-module.exports = {
-  selectUser,
-  selectUserEmail,
-  //selectUserId,
-  insertUserInfo,
-  selectUserPassword,
-  selectUserAccount,
-  updateUserInfo,
-  selectProduct,
-  selectProductId,
-  //getUserData,
-  getPwd,
-};

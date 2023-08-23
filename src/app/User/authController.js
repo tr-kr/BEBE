@@ -38,11 +38,18 @@ exports.login = async function (req, res) {
   }
 };
 
-/*로그아웃 light
-exports.logout = async function (req, res) {
-  User.findOneAndUpdate({ _id: req.userid }, { token: "" }, (err, user) => {
-    if (err) return res.send(response(baseResponse.SUCCESS));
-  });
+//회원탈퇴light
+exports.deleteuser = async function (req, res) {
+  console.log(req.verifiedToken);
+  const useridx = req.verifiedToken.useridx;
+  console.log(useridx);
+  try {
+    const deleteResult = await authService.deleteuser(useridx);
+    return res.send(resposne(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT));
+  } catch (exception) {
+    logger.error("App - deleteuser error\n: ${exception.message}");
+    return res.send(exception);
+  }
 };
 
 /*로그인 인가 light = jwtMiddleware.js

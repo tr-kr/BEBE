@@ -54,9 +54,27 @@ exports.login = async function (email, password) {
   }
 };
 
+//회원탈퇴 light
+exports.deleteuser = async function (useridx) {
+  const connection = await pool.getConnection(async (conn) => conn);
+
+  try {
+    await connection.beginTransaction();
+    const deleteuserResult = await authDao.deleteuser(connection, useridx);
+    await connection.commit();
+    connection.release();
+    return deleteuserResult;
+  } catch (error) {
+    await connection.rollback();
+    connection.release();
+    throw error;
+  }
+};
+
 /*로그아웃 light
 exports.logout = async function (useridx) {
   try {
+    //클라이언트 삭제
     const logoutResult = await authProvider.logout(userIdx);
     return {
       isSuccess: true,
@@ -68,18 +86,6 @@ exports.logout = async function (useridx) {
   }
 };
 
-/*로그인 인가 light
-exports.isAuthorizedToLogin = async function (useridx) {
-  try {
-    const isAuthorized = true;
-    return isAuthorized;
-  } catch (error) {
-    logger.error(error);
-    throw error;
-  }
-};
-
-// }
 
 //////////////////////////////////////////////
 /* Service: Create, Update, Delete 비즈니스 로직 처리
