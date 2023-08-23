@@ -18,20 +18,14 @@ const logger = require("winston"); // 또는 다른 로깅 라이브러리 사�
 exports.login = async function (req, res) {
   try {
     const { email, password } = req.body;
+    console.log(email, password);
+
     if (!email) {
       return res.send(response(baseResponse.SIGNIN_EMAIL_EMPTY));
     }
     if (!password) {
       return res.send(response(baseResponse.SIGNIN_PASSWORD_WRONG));
     }
-
-    // if (!isRegexEmail(postLoginReq.email)) {
-    //   return res.json({
-    //     isSuccess: false,
-    //     code: POST_USERS_INVALID_EMAIL,
-    //     message: "Invalid email format.",
-    //   });
-    // }
 
     const postLoginRes = await authService.login(email, password);
     return res.json({
@@ -51,7 +45,7 @@ exports.logout = async function (req, res) {
   });
 };
 
-/*로그인 인가 light
+/*로그인 인가 light = jwtMiddleware.js
 exports.verifyToken = async function (req, res) {
   const token = req.headers["access-token"];
   try {

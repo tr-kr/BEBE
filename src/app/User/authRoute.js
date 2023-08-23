@@ -6,45 +6,53 @@ module.exports = function (app) {
   //app.post("/api/login", auth.login);
   //app.get("/api/logout", auth.logout);
   //app.get("/api/verify-token", auth.verifyToken);
-
   /**
    * @swagger
    * /api/login:
    *   post:
-   *     summary: User login
-   *     description: Use this API to log in a user with their email and password.
+   *     summary: 사용자 로그인, 패스워드 체크
    *     tags:
-   *       - Authentication
-   *     parameters:
-   *       - in: body
-   *         name: body
-   *         required: true
-   *         description: Login credentials
-   *         schema:
-   *           type: object
-   *           properties:
-   *             email:
-   *               type: string
-   *               description: User's email
-   *             password:
-   *               type: string
-   *               description: User's password
+   *       - 로그인
+   *     requestBody:
+   *       description: User's email and password for login
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *               password:
+   *                 type: string
    *     responses:
    *       200:
    *         description: Successful login
-   *         schema:
-   *           type: object
-   *           properties:
-   *             useridx:
-   *               type: integer
-   *               description: User ID
-   *             jwt:
-   *               type: string
-   *               description: JWT token for authentication
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 isSuccess:
+   *                   type: boolean
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     useridx:
+   *                       type: integer
+   *                     jwt:
+   *                       type: string
    *       400:
-   *         description: Bad request
-   *       500:
-   *         description: Internal server error
+   *         description: Bad request or wrong email/password
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 isSuccess:
+   *                   type: boolean
+   *                 errorMessage:
+   *                   type: string
    */
   app.post("/api/login", auth.login);
 };

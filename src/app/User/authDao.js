@@ -1,6 +1,6 @@
 //로그인 light, 패스워드 체크
 async function getPwd(connection, email, password) {
-  const getPwdQuery = `SELECT id, account, nickname, age, password, phone_number, email, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
+  const getPwdQuery = `SELECT id, nickname,password,email,emailVerified, name, birth, created_at, updated_at, discord_auth, riot_auth, school_auth, played_competition, played_match, win, lose
                             FROM User 
                             WHERE email = ?
                             `;
@@ -9,6 +9,22 @@ async function getPwd(connection, email, password) {
   return selectUserPasswordRow;
 }
 
+/*`id`	INT	AUTO_INCREMENT NOT NULL,
+`email`	VARCHAR(255)	NULL,
+`emailVerified`	BOOLEAN	NULL,
+`password`	VARCHAR(255)	NULL,
+`name`	VARCHAR(255)	NULL,
+`nickname`	VARCHAR(255)	NULL,
+`birth`	DATE	NULL,
+`created_at`	TIMESTAMP	NULL,
+`updated_at`	TIMESTAMP	NULL,
+`discord_auth`	VARCHAR(255)	NULL,
+`riot_auth`	VARCHAR(255)	NULL,
+`school_auth`	VARCHAR(255)	NULL,
+`played_competition`	INT	NULL,
+`played_match`	INT	NULL,
+`win`	INT	NULL,
+`lose`*/
 // class AuthDao {
 //   async getPwd(postLoginReq) {
 //     const getPwdParams = [postLoginReq.getEmail()];
