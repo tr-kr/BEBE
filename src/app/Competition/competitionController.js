@@ -53,16 +53,25 @@ exports.getCompetition = async function (req, res) {
  * API Name : 대회 등록
  * [POST] /api/competition
  */
-exports.registCompetition = async function (req, res) {
-    try {
-        const { competition_title, competition_content, event, qualification, prize,  recruit_period, competition_period, format, scale } = req.body;
-        // const poster_path = req.file.path;
-        const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+
+/*
+const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
         const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
 
         const createCompetitionResponse = await competitionService.createCompetition(
             competition_title, competition_content, event, qualification,
             prize, poster_path, pdf_path, recruit_period, competition_period, format, scale);
+*/
+exports.registCompetition = async function (req, res) {
+    try {
+        const { competition_title, competition_content, event, qualification, prize,  recruit_period, competition_period, format, scale } = req.body;
+        // const poster_path = req.file.path;
+        // const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+        // const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
+
+        const createCompetitionResponse = await competitionService.createCompetition(
+            competition_title, competition_content, event, qualification,
+            prize, recruit_period, competition_period, format, scale);
 
         return res.send(createCompetitionResponse);
     } catch (error) {
@@ -78,17 +87,26 @@ exports.registCompetition = async function (req, res) {
  * API Name : 대회 수정
  * [PUT] /api/competition/:competitionId
  */
-exports.updateCompetition = async function (req, res) {
-    competitionId = req.params.competitionId;
-    const { competition_title, competition_content, event, qualification, prize,  recruit_period, competition_period, format, scale } = req.body;
 
-    //const poster_path = req.file.path;
-    const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+/*
+ const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
     const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
 
     const updateCompetitionResponse = await competitionService.updateCompetition(
         competitionId, competition_title, competition_content, event, qualification,
         prize, poster_path, pdf_path, recruit_period, competition_period, format, scale);
+*/
+exports.updateCompetition = async function (req, res) {
+    competitionId = req.params.competitionId;
+    const { competition_title, competition_content, event, qualification, prize,  recruit_period, competition_period, format, scale } = req.body;
+
+    // const poster_path = req.file.path;
+    // const poster_path = req.files['photo'] ? req.files['photo'].map(photo => photo.path).join(',') : '';
+    // const pdf_path = req.files['pdf'] ? req.files['pdf'].map(pdf => pdf.path).join(',') : '';
+
+    const updateCompetitionResponse = await competitionService.updateCompetition(
+        competitionId, competition_title, competition_content, event, qualification,
+        prize, recruit_period, competition_period, format, scale);
 
     return res.send(updateCompetitionResponse);
 };
