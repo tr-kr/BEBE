@@ -46,7 +46,7 @@ CREATE TABLE `Player` (
 	`id`	INT	AUTO_INCREMENT NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`team_id`	INT	NOT NULL,
-	`nickname`	VARCHAR(255)	NULL,
+	`email`	VARCHAR(255)	NULL,
 	`created_at`	TIMESTAMP	NULL,
 	`updaed_at`	TIMESTAMP	NULL,
 	`name`	VARCHAR(255)	NULL

@@ -332,29 +332,29 @@ app.get('/api/competition', competition.getCompetition);
  *         description: 팀 이름
  *         required: true
  *       - in: formData
- *         name: leader_nickname
+ *         name: leader_email
  *         type: string
- *         description: 팀 리더 닉네임
+ *         description: 팀 리더 이메일
  *         required: true
  *       - in: formData
- *         name: member1_nickname
+ *         name: member1_email
  *         type: string
- *         description: 팀 멤버 1 닉네임
+ *         description: 팀 멤버 1 이메일
  *         required: false
  *       - in: formData
- *         name: member2_nickname
+ *         name: member2_email
  *         type: string
- *         description: 팀 멤버 2 닉네임
+ *         description: 팀 멤버 2 이메일
  *         required: false
  *       - in: formData
- *         name: member3_nickname
+ *         name: member3_email
  *         type: string
- *         description: 팀 멤버 3 닉네임
+ *         description: 팀 멤버 3 이메일
  *         required: false
  *       - in: formData
- *         name: member4_nickname
+ *         name: member4_email
  *         type: string
- *         description: 팀 멤버 4 닉네임
+ *         description: 팀 멤버 4 이메일
  *         required: false
  *     responses:
  *       200:

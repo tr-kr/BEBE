@@ -87,7 +87,7 @@ module.exports = function(app){
 
     /////////////////////////////////////회원가입
     //app.post('/api/signup/accountCheck', user.accountCheckTest);
-    //app.post('/api/signup/nicknameCheck', user.nicknameCheckTest);
+    app.post('/api/signup/nicknameCheck', user.nicknameCheckTest);
     /**
  * @swagger
  * tags:

@@ -88,23 +88,23 @@ async function entryCompetitionTeam(connection, competitionId, entryCompetitionP
   `;
 
   const entryCompetitionPlayerQuery = `
-  INSERT INTO Player (team_id, nickname, isLeader, created_at, updated_at)
+  INSERT INTO Player (team_id, email, isLeader, created_at, updated_at)
   VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
   `;
   try {
     
-    const [team_name, ...nicknames] = entryCompetitionParams;
+    const [team_name, ...emails] = entryCompetitionParams;
     entryCompetitionTeamQueryParams = [team_name, competitionId];
     await connection.query(entryCompetitionTeamQuery, entryCompetitionTeamQueryParams);
 
     const result = await connection.query('SELECT LAST_INSERT_ID()');
     const teamId = result[0][0]['LAST_INSERT_ID()'];
 
-    for (let i = 0; i < nicknames.length; i++) {
+    for (let i = 0; i < emails.length; i++) {
       let isLeader = i === 0;
       let entryCompetitionPlayerQueryParams = [
         teamId,
-        nicknames[i],
+        emails[i],
         isLeader,
       ];
       await connection.query(entryCompetitionPlayerQuery, entryCompetitionPlayerQueryParams);
