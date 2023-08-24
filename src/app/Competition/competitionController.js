@@ -124,7 +124,15 @@ exports.entryCompetitionTeam = async function (req,res) {
 
     competitionId = req.params.competitionId;
     
-    entryCompetitionParams = [team_name, leader_email, member1_email, member2_email, member3_email, member4_email];
+    entryCompetitionParams = [team_name, leader_email];
+
+    const array = [ member1_email, member2_email ,member3_email ,member4_email]
+
+    for(const arr in array){
+        if(arr !== null){
+            entryCompetitionParams.push(arr);
+        }
+    }
 
     const entryCompetitionTeamResponse = await competitionService.entryCompetitionTeam(competitionId, entryCompetitionParams);
 
