@@ -101,7 +101,7 @@ module.exports = function(app){
  *                   type: string
  */
 
-    app.get('/api/user/:userId', user.getUserById);
+  //  app.get('/api/user/:userId', user.getUserById);
 
     /**
  * @swagger
