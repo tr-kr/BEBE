@@ -202,10 +202,7 @@ app.get('/api/competition', competition.getCompetition);
  *       500:
  *         description: 내부 서버 오류
  */
-    app.post('/api/competition', upload.fields([
-      { name: 'photo', maxCount: 5 },
-      { name: 'pdf', maxCount: 5 }
-    ]), competition.registCompetition);
+    app.post('/api/competition', upload.none(), competition.registCompetition);
    
 /**
  * @swagger
@@ -287,11 +284,15 @@ app.get('/api/competition', competition.getCompetition);
  *       500:
  *         description: 내부 서버 오류
  */
+    app.put('/api/competition/:competitionId', upload.none(), competition.updateCompetition);
+    
+/*
     app.put('/api/competition/:competitionId', upload.fields([
       { name: 'photo', maxCount: 5 },
       { name: 'pdf', maxCount: 5 }
     ]), competition.updateCompetition);
-    
+*/
+
 /**
  * @swagger
  * /api/competition/{competitionId}:
