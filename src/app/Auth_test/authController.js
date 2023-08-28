@@ -469,7 +469,7 @@ exports.check = async function (req, res) {
 
 const CLIENT_ID = '1138439231073693736';
 const CLIENT_SECRET = 'X1RhkGDGGwbHCnhuj6SDTPsMGodUOwe4';
-const REDIRECT_URI = 'http://ryueclipse.shop/api/auth/discord/callback';
+const REDIRECT_URI = 'https://ryueclipse.shop/api/auth/discord/callback';
 
 
 
