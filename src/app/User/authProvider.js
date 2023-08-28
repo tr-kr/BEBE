@@ -7,7 +7,6 @@ exports.getPwd = async function (email, password) {
   const connection = await pool.getConnection(async (conn) => conn);
   const pwdCheckResult = await authDao.getPwd(connection, email, password);
   connection.release();
-
   return pwdCheckResult;
 };
 
